@@ -21,8 +21,9 @@
     <script type="module" src="js/guided-typing.mjs"></script>
   </head>
   <body>
-    <div class="doc-icon-holder">
+    <div class="settings-icons-holder">
       <img id="doc-icon" src="img/document-icon.png" alt="Story Icon" title="Edit story text">
+      <img id="keyboard-icon" src="img/keyboard-icon.png" alt="Keyboard Icon" title="Change keyboard layout">
     </div>
     <div id="document-holder"></div>
     <div id="settings-holder">
@@ -38,6 +39,17 @@
       <div id="settings-text-help"></div>
     </div>
   </body>
+  <dialog id="keyboard-layout-dialog">
+    <fieldset>
+      <legend>Select keyboard layout:</legend>
+      <select id="layout-select">
+      </select>
+    </fieldset>
+    <div id="layout-button-holder">
+      <button data-command="ok">OK</button>
+      <button data-command="cancel">Cancel</button>
+    </div>
+  </dialog>
 </html>
 
 <!-- vim: set fo=q tw=80 : -->

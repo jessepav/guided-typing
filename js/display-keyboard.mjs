@@ -276,13 +276,22 @@ const COMPONENT_CSS = `
 // keyboard maps and getKeyboardData() {{{1
 
 // Maps the name of a layout to its definition
-const keyboardDefMap = new Map([
-    ['US_QWERTY', US_QWERTY_DEF],
-]);
+const keyboardDefMap = new Map();
 
 // Maps the name of a layout to its data object (lazily populated):
 //  { canonicalNameMap, plainNameMap, shiftedNameMap, templateEl }
 const keyboardDataMap = new Map();
+
+function addKeyboardDef(layoutName, keyboardDef) {
+    keyboardDefMap.set(layoutName, keyboardDef);
+    keyboardDataMap.delete(layoutName);  // clear any cached data
+}
+
+addKeyboardDef('US_QWERTY', US_QWERTY_DEF);
+
+function getLayoutNames() {
+    return [...keyboardDefMap.keys()];
+}
 
 // Returns the entry in keyboardDataMap corresponding to layoutName if available,
 // otherwise generates the entry and puts it in keyboardDataMap before returning it.
@@ -373,4 +382,5 @@ customElements.define("display-keyboard", DisplayKeyboard);
 
 export {
     DisplayKeyboard,
+    getLayoutNames,
 };

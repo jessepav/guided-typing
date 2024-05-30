@@ -1,4 +1,4 @@
-import { DisplayKeyboard } from './display-keyboard.mjs';
+import { DisplayKeyboard, getLayoutNames } from './display-keyboard.mjs';
 
 const HELP_URL = "doc/formatting-help.md";
 const INITIAL_STORY_URL = "samples/initial-sample.md";
@@ -17,11 +17,15 @@ const keyboard = new DisplayKeyboard('US_QWERTY');
 const documentHolder = document.getElementById('document-holder');
 const settingsHolder = document.getElementById('settings-holder');
 const docIcon = document.getElementById('doc-icon');
+const keyboardIcon = document.getElementById('keyboard-icon');
 const settingsStoryTextarea = document.getElementById('settings-story-textarea');
 const settingsTextHelp = document.getElementById('settings-text-help');
 const settingsButtonHolder = document.getElementById('settings-button-holder');
 const settingsSaveButton = settingsHolder.querySelector("[data-command='save']");
 const settingsCancelButton = settingsHolder.querySelector("[data-command='cancel']");
+const layoutDialog = document.getElementById('keyboard-layout-dialog');
+const layoutSelect = document.getElementById('layout-select');
+const layoutButtonHolder = document.getElementById('layout-button-holder');
 
 const mdit = window.markdownit({
     html: true,
@@ -62,6 +66,41 @@ function settingsButtonClicked(ev) {
     } else if (command == 'cancel') {
         document.body.classList.remove("settings");
     }
+}
+
+function showLayoutDialog() {
+    if (layoutSelect.childElementCount == 0) {
+        const layouts = getLayoutNames();
+        for (const layout of layouts) {
+            const option = document.createElement('option');
+            option.value = layout;
+            option.innerText = layout;
+            if (layout == keyboard.layoutName)
+                option.selected = true;
+            layoutSelect.append(option);
+        }
+    } else {
+        for (const option of layoutSelect.children) {
+            if (option.value == keyboard.layoutName) {
+                option.selected = true;
+                break;
+            }
+        }
+    }
+    layoutDialog.showModal();
+}
+
+function layoutButtonClicked(ev) {
+    const command = ev.target.dataset.command;
+    if (!command)
+        return;
+    switch (command) {
+      case 'ok':
+        break;
+      case 'cancel':
+        break;
+    }
+    layoutDialog.close();
 }
 
 function processTextInput(textarea, sectionText, successCheck, keyboard) {
@@ -143,6 +182,9 @@ function main() {
             settingsSaveButton.click();
         }
     });
+
+    keyboardIcon.addEventListener('click', showLayoutDialog);
+    layoutButtonHolder.addEventListener('click', layoutButtonClicked);
 
     const mdText = localStorage.getItem(STORAGE_KEY) ?? DEFAULT_MDTEXT;
     showDocumentText(mdText);

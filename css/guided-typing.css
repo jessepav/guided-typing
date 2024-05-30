@@ -197,15 +197,24 @@ display-keyboard {
   margin-bottom: 1em;
 }
 
-.doc-icon-holder {
+.settings-icons-holder {
   position: absolute;
   right: 5px;
   top: 5px;
-}
 
-#doc-icon {
-  width: 32px;
-  cursor: pointer;
+  & > img {
+    cursor: pointer;
+  }
+
+  img + img {
+    margin-left: 10px;
+  }
+
+  #doc-icon { width: 32px; }
+  #keyboard-icon {
+    width: 50px;
+    vertical-align: 6px;
+  }
 }
 
 /* Set when the user shows the settings screen. */
@@ -286,5 +295,18 @@ body.settings {
     p:first-child, p:last-child {
       margin: 0;
     }
+  }
+}
+
+#keyboard-layout-dialog {
+  #layout-select {
+    background-color: #f1f0f0;
+    width: 100%;
+    padding: 5px;
+  }
+
+  #layout-button-holder {
+    margin-top: 0.5em;
+    text-align: right;
   }
 }
