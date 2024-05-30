@@ -1,4 +1,4 @@
-## Story Formatting Help
+## Guide
 
 A "story" (that is, the entire document) is divided into chapters, and
 the chapters into sections. When the user clicks a section, a typing
@@ -62,5 +62,13 @@ The poop was not a normal poop: it was a poop with two eyes and a
 big smile.
 
 </div>
+
+-----
+
+### Project Information
+
+© Jesse Pavel (<jpavel@gmail.com>)
+
+<https://github.com/jessepav/guided-typing/>
 
 <!-- vim: set tw=72 : -->
