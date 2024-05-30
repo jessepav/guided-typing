@@ -6,8 +6,6 @@
 A paragraph of text. Paragraphs are separated
 from one another by a blank line.
 
-Another paragraph.
-
 ---
 
 Three or more dashes, like above, will separate

@@ -7,7 +7,7 @@ section.
 
 A line that starts with `#` or `##` is a chapter title. If the line
 starts with `#` the chapter will be initially open, and if `##` the
-chapter will be collapsed (click it to open).
+chapter will be collapsed (click-to-open).
 
 Each section is made up of one or more paragraphs. A paragraph is a
 block of text divided from other paragraphs by a blank line.
