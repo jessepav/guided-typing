@@ -1,4 +1,4 @@
-import { DisplayKeyboard, getLayoutNames } from './display-keyboard.mjs';
+import { DisplayKeyboard, addKeyboardDef, getLayoutNames } from './display-keyboard.mjs';
 
 const HELP_URL = "doc/formatting-help.md";
 const INITIAL_STORY_URL = "samples/initial-sample.md";
@@ -12,7 +12,7 @@ at the top right of the page to edit your story, or click on this text to
 see how typing works.
 `;
 
-const keyboard = new DisplayKeyboard('US_QWERTY');
+let keyboard = new DisplayKeyboard('US_QWERTY');
 
 const documentHolder = document.getElementById('document-holder');
 const settingsHolder = document.getElementById('settings-holder');
@@ -71,6 +71,7 @@ function settingsButtonClicked(ev) {
 function showLayoutDialog() {
     if (layoutSelect.childElementCount == 0) {
         const layouts = getLayoutNames();
+        layouts.sort();
         for (const layout of layouts) {
             const option = document.createElement('option');
             option.value = layout;
@@ -96,6 +97,13 @@ function layoutButtonClicked(ev) {
         return;
     switch (command) {
       case 'ok':
+        const newLayoutName = layoutSelect.selectedOptions[0].value;
+        if (newLayoutName != keyboard.layoutName) {
+            const newKeyboard = new DisplayKeyboard(newLayoutName);
+            if (keyboard.parentElement)
+                keyboard.replaceWith(newKeyboard);
+            keyboard = newKeyboard;
+        }
         break;
       case 'cancel':
         break;

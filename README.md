@@ -25,3 +25,11 @@ active text section.
 "Stories" are entered using a simple subset of Markdown, completely described in
 the app itself. The first time the app is loaded, it will provide instructions
 for entering your own text.
+
+## Keyboard Layouts
+
+The `DisplayKeyboard` web component in
+[`js/display-keyboard.mjs`](https://github.com/jessepav/guided-typing/blob/master/js/display-keyboard.mjs)
+supports adding keyboard layouts at runtime, though currently I only have a
+definition written for `US_QWERTY`. I'm happy to merge PRs for alternate
+layouts.

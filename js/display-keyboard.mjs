@@ -382,5 +382,6 @@ customElements.define("display-keyboard", DisplayKeyboard);
 
 export {
     DisplayKeyboard,
+    addKeyboardDef,
     getLayoutNames,
 };
