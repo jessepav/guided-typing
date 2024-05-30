@@ -220,7 +220,7 @@ display-keyboard {
 /* Set when the user shows the settings screen. */
 body.settings {
   #document-holder { display: none; }
-  #doc-icon { display: none; }
+  .settings-icons-holder { display: none; }
   #settings-holder { display: grid; }
 }
 
