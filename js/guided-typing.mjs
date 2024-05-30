@@ -2,7 +2,7 @@ import { DisplayKeyboard } from './display-keyboard.mjs';
 
 const HELP_URL = "doc/formatting-help.md";
 const INITIAL_STORY_URL = "samples/initial-sample.md";
-const STORAGE_KEY = "typing-tutor-story";
+const STORAGE_KEY = "guided-typing-story";
 const DEFAULT_MDTEXT = `
 # First Time Instructions
 

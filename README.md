@@ -1,11 +1,11 @@
-# typing-tutor
+# guided-typing
 
 A web-app to guide new typists through keying in texts with an on-screen
 keyboard showing which keys should be pressed next.
 
-https://jessepav.github.io/typing-tutor/
+https://jessepav.github.io/guided-typing/
 
-(The app is intended for use on a device that has a physical keyboard.)
+**Note**: the app is intended for use on a device that has a physical keyboard.
 
 ## Why this app?
 
@@ -18,7 +18,7 @@ In the below screenshot, you see how the app shows which keys need to be pressed
 next, taking into account the left and right shift keys, to continue typing the
 active text section.
 
-![App screenshot](https://github.com/jessepav/typing-tutor/blob/master/doc/typing-tutor-screenshot.png)
+![App screenshot](https://github.com/jessepav/guided-typing/blob/master/doc/guided-typing-screenshot.png)
 
 ## Entering Your Own Text
 
