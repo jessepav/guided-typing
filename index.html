@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Typing Tutor</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+      html {
+        --sans-serif-family: "Roboto", sans-serif;
+        --monospace-family: "Roboto Mono", monospace;
+      }
+    </style>
+
+    <link rel="stylesheet" href="css/typing-tutor.css">
+    <script defer src="lib/markdown-it.min.js"></script>
+    <script type="module" src="js/typing-tutor.mjs"></script>
+  </head>
+  <body>
+    <div class="doc-icon-holder">
+      <img id="doc-icon" src="img/document-icon.png" alt="Story Icon" title="Edit story text">
+    </div>
+    <div id="document-holder"></div>
+    <div id="settings-holder">
+      <div id="settings-text-holder">
+        <p>Story Text</p>
+        <textarea id="settings-story-textarea"
+                  placeholder="Type or paste your text here and click Save"></textarea>
+        <div id="settings-button-holder">
+          <button data-command="save">Save</button>
+          <button data-command="cancel">Cancel</button>
+        </div>
+      </div>
+      <div id="settings-text-help"></div>
+    </div>
+  </body>
+</html>
+
+<!-- vim: set fo=q tw=80 : -->

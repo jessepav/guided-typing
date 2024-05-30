@@ -1,0 +1,290 @@
+@charset "UTF-8";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  line-height: 1.5;
+  font-family: var(--sans-serif-family);
+  font-size: 20px;;
+  color: black;
+  background-color: gray;
+  scroll-behavior: smooth;
+  --error-color: red;
+  --success-color: #0067c2;
+}
+
+#document-holder {
+  display: block;
+
+  background-color: white;
+  margin: 1rem auto;
+  padding: 3rem;
+  hyphens: none;
+  overflow-wrap: break-word;
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
+  max-width: 800px;
+}
+
+p {
+  margin: 1em 0;
+}
+
+a {
+  color: #1a1a1a;
+}
+
+a:visited {
+  color: #1a1a1a;
+}
+
+img {
+  max-width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 1.4em;
+}
+
+h1 {
+  font-size: 1.7em;
+  margin-top: 1em;
+}
+
+h2 {
+  font-size: 1.5em;
+}
+
+h5, h6 {
+  font-size: 1em;
+  font-style: italic;
+}
+
+h6 {
+  font-weight: normal;
+}
+
+ol, ul {
+  padding-left: 1.7em;
+  margin-top: 1em;
+}
+
+li > ol, li > ul {
+  margin-top: 0;
+}
+
+blockquote {
+  margin: 1em 0 1em 0.5em;
+  padding-left: 0.7em;
+  color: #3e3e3e;
+  border-left: 2px solid #e6e6e6;
+}
+
+pre, code, kbd {
+  font-family: var(--monospace-family);
+}
+
+code {
+  margin: 0;
+}
+
+pre {
+  margin: 1em 0;
+  overflow: auto;
+  line-height: 1.4;
+}
+
+pre code {
+  font-size: 95%;
+  padding: 0;
+  overflow: visible;
+  overflow-wrap: normal;
+}
+
+hr {
+  background-color: #1a1a1a;
+  border: none;
+  height: 1px;
+  margin: 1em 0;
+}
+
+table {
+  margin: 1em 0;
+  border-collapse: collapse;
+  width: 100%;
+  display: block;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+table caption {
+  margin-bottom: 0.75em;
+}
+
+tbody {
+  margin-top: 0.5em;
+  border-top: 1px solid #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+th {
+  border-top: 1px solid #1a1a1a;
+  padding: 0.25em 0.5em 0.25em 0.5em;
+}
+
+td {
+  padding: 0.125em 0.5em 0.25em 0.5em;
+}
+
+header {
+  margin-bottom: 2em;
+  text-align: center;
+}
+
+summary {
+    padding: 0 7px;
+    font-weight: bold;
+    font-size: 108%;
+}
+
+section {
+  position: relative;
+  border-top: 1px solid white;
+  border-bottom: 1px solid black;
+  margin: 0;
+  padding: 0px 8px;
+}
+
+section:first-of-type {
+  border-top: 1px solid black;
+}
+
+section.selected {
+  background-color: #bce7ff
+}
+
+textarea {
+  width: 100%;
+  margin-top: 0.5em;
+  font-size: 1rem;
+  font-family: var(--sans-serif-family);
+  line-height: 1.5;
+  padding: 8px;
+  background-color: #eaeff9;
+  color: black;
+}
+
+.success-check {
+  position: absolute;
+  right: 5px;
+  bottom: -4px;
+  color: var(--success-color);
+  font-size: 1.2rem;
+  display: none;
+
+  &::before {
+    content: "✓";
+  }
+}
+
+display-keyboard {
+  margin-bottom: 1em;
+}
+
+.doc-icon-holder {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+
+#doc-icon {
+  width: 32px;
+  cursor: pointer;
+}
+
+/* Set when the user shows the settings screen. */
+body.settings {
+  #document-holder { display: none; }
+  #doc-icon { display: none; }
+  #settings-holder { display: grid; }
+}
+
+#settings-holder {
+  display: none;
+
+  height: 100dvh;
+  margin: 0;
+  padding: 20px 0px;
+  grid-template-columns: 1.4fr 1fr;
+  grid-template-rows: 100%;
+  column-gap: 0px;
+
+  background: white;
+  font-size: 16px;
+}
+
+#settings-text-holder {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto 1fr auto;
+  border-right: 1px solid gray;
+  padding: 0px 20px;
+
+  p:first-child {
+    font-weight: bold;
+    font-size: 110%;
+    margin: 0;
+    text-align: center;
+  }
+
+  textarea {
+    margin-top: 5px;
+    font-size: inherit;
+    border-radius: 5px;
+    font-family: var(--monospace-family);
+    resize: none;
+  }
+
+  #settings-button-holder {
+    text-align: right;
+    margin-top: 8px;
+
+    button {
+      font-family: var(--monospace-family);
+      font-weight: bold;
+    }
+  }
+}
+
+#settings-text-help {
+  overflow: auto;
+  padding: 0px 10px 0 20px;
+
+  h2:first-of-type {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  code {
+    background-color: #e1dfdf;
+    padding: 1px 2px;
+    border-radius: 4px;
+  }
+
+  .example-story {
+    background-color: #d9d9d9;
+    border-radius: 5px;
+    padding: 6px;
+    font-family: var(--monospace-family);
+
+    p:first-child, p:last-child {
+      margin: 0;
+    }
+  }
+}
