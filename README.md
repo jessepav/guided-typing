@@ -3,7 +3,7 @@
 A web-app to guide new typists through keying in texts with an on-screen
 keyboard showing which keys should be pressed next.
 
-https://jessepav.github.io/guided-typing/
+https://guidedtyping.com/
 
 **Note**: the app is intended for use on a device that has a physical keyboard.
 
