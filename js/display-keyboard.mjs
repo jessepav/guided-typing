@@ -1,225 +1,3 @@
-// US_QWERTY_DEF {{{1
-
-const US_QWERTY_DEF = {
-    layout: [ // rows from top to bottom
-        [
-            // [string, string, number]: [plain, shifted, size (in relative numeric units)]
-            ['`', '~', 1],
-            ['1', '!', 1],
-            ['2', '@', 1],
-            ['3', '#', 1],
-            ['4', '$', 1],
-            ['5', '%', 1],
-            ['6', '^', 1],
-            ['7', '&', 1],
-            ['8', '*', 1],
-            ['9', '(', 1],
-            ['0', ')', 1],
-            ['-', '_', 1],
-            ['=', '+', 1],
-            ['Backspace', 2],   // [string, number]: same key plain and shifted
-        ],
-        [
-            ['Tab', 1.5],
-            ['q', 'Q', 1],
-            ['w', 'W', 1],
-            ['e', 'E', 1],
-            ['r', 'R', 1],
-            ['t', 'T', 1],
-            ['y', 'Y', 1],
-            ['u', 'U', 1],
-            ['i', 'I', 1],
-            ['o', 'O', 1],
-            ['p', 'P', 1],
-            ['[', '{', 1],
-            [']', '}', 1],
-            ['\\', '|', 1.5],
-        ],
-        [
-            ['Caps', 1.8],
-            ['a', 'A', 1],
-            ['s', 'S', 1],
-            ['d', 'D', 1],
-            ['f', 'F', 1],
-            ['g', 'G', 1],
-            ['h', 'H', 1],
-            ['j', 'J', 1],
-            ['k', 'K', 1],
-            ['l', 'L', 1],
-            [';', ':', 1],
-            ["'", '"', 1],
-            ['Enter', 2.2],
-        ],
-        [
-            // [string, number, string]: [displayed name, size, canonical name]
-            ['Shift', 2.5, 'Shift_L'],
-            ['z', 'Z', 1],
-            ['x', 'X', 1],
-            ['c', 'C', 1],
-            ['v', 'V', 1],
-            ['b', 'B', 1],
-            ['n', 'N', 1],
-            ['m', 'M', 1],
-            [',', '<', 1],
-            ['.', '>', 1],
-            ['/', '?', 1],
-            ['Shift', 2.5, 'Shift_R'],
-        ],
-        [
-            ['Ctrl', 1.2, 'Ctrl_L'],
-            ['', 1.2],  // empty name: ignored for mappings
-            ['Alt', 1.2, 'Alt_L'],
-            ['Space', 6.6],
-            ['Alt', 1.2, 'Alt_R'],
-            ['', 1.2],
-            ['', 1.2],
-            ['Ctrl', 1.2, 'Ctrl_R'],
-        ],
-    ],
-    leftHandKeys: [  // the canonical names of the keys one would press with the left hand
-        '`', '1', '2', '3', '4', '5', '6',
-        'Tab', 'q', 'w', 'e', 'r', 't',
-        'Caps', 'a', 's', 'd', 'f', 'g',
-        'Shift_L', 'z', 'x', 'c', 'v', 'b',
-        'Ctrl_L', 'Alt_L',
-    ],
-    rightHandKeys: [ // ...and the right hand
-        '7', '8', '9', '0', '-', '=', 'Backspace',
-        'y', 'u', 'i', 'o', 'p', '[', ']', '\\',
-        'h', 'j', 'k', 'l', ';', "'", 'Enter',
-        'n', 'm', ',', '.', '/', 'Shift_R',
-        'Alt_R', 'Ctrl_R',
-    ],
-    // see the comment for processKeyboardDef() for a description of expandDeadKeysFunc()
-    expandDeadKeysFunc(text) {
-        return text;
-    }
-};
-
-/* processKeyboardDef() {{{1
-
-processKeyboardDef() reads a keyboard definition and returns an object with
-these properties:
-
-  canonicalNameMap:
-
-    a Map from each key's canonical name to an object of this form:
-       {
-           plain: [string of the key's plain name],
-           shifted: [string of the key's shifted name],
-           hand: 'l', 'r', or ' ' indicating if the key should be pressed with
-                 the left, right, or either hand.
-           id: [string ID of the element in the generated HTML]
-       }
-
-  plainNameMap:
-
-    a Map from each key's plain name to its canonical name
-
-  shiftedNameMap:
-
-    a Map from each key's shifted name to its canonical name. A key is included
-    only if its shifted name is different from its plain name.
-
-  expandDeadKeysFunc(text):
-
-    a function that expands characters in text which require the use of dead keys
-    into the constituent key presses needed to produce them. For instance, if
-    producing "é" requires pressing "'" and then "e", this function would replace
-    all instance of "é" in text with the two character sequence "'e".
-
-  keyboardHTML:
-
-    HTML implementing the keyboard layout
-
-*/
-
-function processKeyboardDef(def) {
-    const leftkeys = new Set(def.leftHandKeys);
-    const rightkeys = new Set(def.rightHandKeys);
-
-    function sizeCSS(size) {
-        return `flex: ${size} 0px`;
-    }
-
-    // Returns [canonical name, plain name, shifted name, size]
-    function readKey(keydef) {
-        let cname, pname, sname, size;
-        if (keydef.length == 2) {
-            cname = pname = sname = keydef[0];
-            size = keydef[1];
-        } else if (typeof keydef[2] == 'number') {
-            cname = pname = keydef[0];
-            sname = keydef[1];
-            size = keydef[2];
-        } else {
-            cname = keydef[2];
-            pname = sname = keydef[0];
-            size = keydef[1];
-        }
-        return [cname, pname, sname, size];
-    }
-
-    let idCntr = 0;
-    const genId = () => `key-${String(++idCntr).padStart(3, '0')}`;
-
-    const canonicalNameMap = new Map();
-    const plainNameMap = new Map();
-    const shiftedNameMap = new Map();
-    const htmlParts = [];
-
-    htmlParts.push("<div class='keyboard'>");
-    for (const row of def.layout) {
-        htmlParts.push("<div class='keyboard-row'>");
-        for (const key of row) {
-            const [cname, pname, sname, size] = readKey(key);
-            if (!cname) {  // a blank key
-                htmlParts.push(`<div class='key' style='${sizeCSS(size)};'></div>`);
-            } else {
-                const keyId = genId();
-                const hand = leftkeys.has(cname) ? 'l' :
-                             rightkeys.has(cname) ? 'r' :
-                             ' ';
-                canonicalNameMap.set(cname, {
-                    plain: pname,
-                    shifted: sname,
-                    hand: hand,
-                    id: keyId
-                });
-                plainNameMap.set(pname, cname);
-                if (pname != sname)
-                    shiftedNameMap.set(sname, cname);
-
-                htmlParts.push(`<div id='${keyId}' class='key' style='${sizeCSS(size)};'>`);
-                if (pname.toUpperCase() == sname.toUpperCase()) {  // one of the letter keys or a single-name key
-                    let extraClasses = '';
-                    if (pname == 'Backspace')
-                        extraClasses += ' small-label';
-                    htmlParts.push(`<span class='key-label single${extraClasses}'>${sname}</span>`);
-                } else {
-                    htmlParts.push(`<span class='key-label shifted'>${sname}</span>`);
-                    htmlParts.push(`<span class='key-label plain'>${pname}</span>`);
-                }
-                htmlParts.push("</div>");
-            }
-        }
-        htmlParts.push("</div>");
-    }
-    htmlParts.push("</div>");
-
-    // Some whitespace keys get special treatment
-    [[' ', 'Space'], ['\n', 'Enter'], ['\t', 'Tab'], ['\b', 'Backspace']]
-        .forEach(([c,v]) => { plainNameMap.set(c, v); });
-
-    return {
-        canonicalNameMap,
-        plainNameMap,
-        shiftedNameMap,
-        expandDeadKeysFunc: def.expandDeadKeysFunc,
-        keyboardHTML: htmlParts.join('\n')
-    };
-}
-
 // COMPONENT_CSS {{{1
 
 const COMPONENT_CSS = `
@@ -284,14 +62,161 @@ const COMPONENT_CSS = `
     </style>
 `;
 
-// }}}
+// US_QWERTY_DEF {{{1
+
+const US_QWERTY_DEF = {
+    /*
+     * The physical layout of the keyboard, given as nested arrays.
+     * The outer array lists rows from top to bottom.
+     * Within each row, each entry is of the form:
+     *
+     *   [canonical name, relative width, ...glyphs (0 to 4)]
+     *
+     * If the canonical name is falsy, the key will be rendered blank
+     * in the generated HTML and won't be used for productions.
+     */
+    layout: [
+        [
+            ['`', 1, '`', '~'],
+            ['1', 1, '1', '!'],
+            ['2', 1, '2', '@'],
+            ['3', 1, '3', '#'],
+            ['4', 1, '4', '$'],
+            ['5', 1, '5', '%'],
+            ['6', 1, '6', '^'],
+            ['7', 1, '7', '&'],
+            ['8', 1, '8', '*'],
+            ['9', 1, '9', '('],
+            ['0', 1, '0', ')'],
+            ['-', 1, '-', '_'],
+            ['=', 1, '=', '+'],
+            ['\b', 2, 'Backspace'],
+        ],
+        [
+            ['\t', 1.5, 'Tab'],
+            ['q', 1, 'q', 'Q'],
+            ['w', 1, 'w', 'W'],
+            ['e', 1, 'e', 'E'],
+            ['r', 1, 'r', 'R'],
+            ['t', 1, 't', 'T'],
+            ['y', 1, 'y', 'Y'],
+            ['u', 1, 'u', 'U'],
+            ['i', 1, 'i', 'I'],
+            ['o', 1, 'o', 'O'],
+            ['p', 1, 'p', 'P'],
+            ['[', 1, '[', '{'],
+            [']', 1, ']', '}'],
+            ['\\', 1.5, '\\', '|'],
+        ],
+        [
+            ['Caps', 1.8, 'Caps'],
+            ['a', 1, 'a', 'A'],
+            ['s', 1, 's', 'S'],
+            ['d', 1, 'd', 'D'],
+            ['f', 1, 'f', 'F'],
+            ['g', 1, 'g', 'G'],
+            ['h', 1, 'h', 'H'],
+            ['j', 1, 'j', 'J'],
+            ['k', 1, 'k', 'K'],
+            ['l', 1, 'l', 'L'],
+            [';', 1, ';', ':'],
+            ["'", 1, "'", '"'],
+            ['\n', 2.2, 'Enter'],
+        ],
+        [
+            ['Shift_L', 2.5, 'Shift'],
+            ['z', 1, 'z', 'Z'],
+            ['x', 1, 'x', 'X'],
+            ['c', 1, 'c', 'C'],
+            ['v', 1, 'v', 'V'],
+            ['b', 1, 'b', 'B'],
+            ['n', 1, 'n', 'N'],
+            ['m', 1, 'm', 'M'],
+            [',', 1, ',', '<'],
+            ['.', 1, '.', '>'],
+            ['/', 1, '/', '?'],
+            ['Shift_R', 2.5, 'Shift'],
+        ],
+        [
+            ['Ctrl_L', 1.2, 'Ctrl'],
+            ['', 1.2],
+            ['Alt_L', 1.2, 'Alt'],
+            [' ', 6.6],
+            ['Alt_R', 1.2, 'Alt'],
+            ['', 1.2],
+            ['', 1.2],
+            ['Ctrl_R', 1.2, 'Ctrl'],
+        ],
+    ],
+
+    // a function that returns an array of the canonical names of the keys that are
+    // required to produce a given character.
+    keysForChar(c) {
+    },
+
+    // a function that expands characters in text which require the use of dead keys
+    // into the constituent key presses needed to produce them. For instance, if
+    // producing "é" requires pressing "'" and then "e", this function would replace
+    // all instance of "é" in text with the two character sequence "'e".
+    expandDeadKeysFunc(text) {
+        return text;
+    }
+};
+
+/* generateKeyboardHTML() {{{1
+ *
+ * generateKeyboardHTML() reads a keyboard definition and returns an object with
+ * these properties:
+ *
+ *   keyboardHTML:  HTML implementing the keyboard layout
+ *
+ *   nameIdMap:     a map from each key's canonical name to the element ID of
+ *                  that key in keyboardHTML
+ */
+
+function generateKeyboardHTML(def) {
+    let idCntr = 0;
+    const genId = () => `key-${String(++idCntr).padStart(3, '0')}`;
+
+    const nameIdMap = new Map();
+    const htmlParts = [];
+
+    htmlParts.push("<div class='keyboard'>");
+    for (const row of def.layout) {
+        htmlParts.push("<div class='keyboard-row'>");
+        for (const key of row) {
+            const [cname, size, ...glyphs] = key;
+            if (!cname) {  // a blank key
+                htmlParts.push(`<div class='key' style='flex: ${size} 0px;'></div>`);
+            } else {
+                const keyId = genId();
+                nameIdMap.set(cname, keyId);
+                htmlParts.push(`<div id='${keyId}' class='key' style='flex: ${size} 0px;'>`);
+                let extraClasses = '';
+                if (cname == '\b') // make the backspace label smaller than it would be
+                    extraClasses += ' small-label';
+                for (const glyph of glyphs)
+                    htmlParts.push(`<span class='key-label${extraClasses}'>${glyph}</span>`);
+                htmlParts.push("</div>");
+            }
+        }
+        htmlParts.push("</div>");
+    }
+    htmlParts.push("</div>");
+
+    return {
+        keyboardHTML: htmlParts.join('\n'),
+        nameIdMap
+    };
+}
+
 // keyboard maps and getKeyboardData() {{{1
 
 // Maps the name of a layout to its definition
 const keyboardDefMap = new Map();
 
 // Maps the name of a layout to its data object (lazily populated):
-//  { canonicalNameMap, plainNameMap, shiftedNameMap, expandDeadKeysFunc, templateEl }
+//  { nameIdMap, templateEl }
 const keyboardDataMap = new Map();
 
 function addKeyboardDef(layoutName, keyboardDef) {
@@ -310,11 +235,10 @@ function getLayoutNames() {
 function getKeyboardData(layoutName) {
     let keyboardData = keyboardDataMap.get(layoutName);
     if (!keyboardData) {
-        const { canonicalNameMap, plainNameMap, shiftedNameMap, expandDeadKeysFunc, keyboardHTML } =
-            processKeyboardDef(keyboardDefMap.get(layoutName));
+        const { nameIdMap, keyboardHTML } = generateKeyboardHTML(keyboardDefMap.get(layoutName));
         const templateEl = document.createElement('template');
         templateEl.innerHTML = COMPONENT_CSS + keyboardHTML;
-        keyboardData = { canonicalNameMap, plainNameMap, shiftedNameMap, expandDeadKeysFunc, templateEl };
+        keyboardData = { nameIdMap, templateEl };
         keyboardDataMap.set(layoutName, keyboardData);
     }
     return keyboardData;
