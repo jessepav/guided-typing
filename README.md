@@ -26,10 +26,20 @@ active text section.
 the app itself. The first time the app is loaded, it will provide instructions
 for entering your own text.
 
+Alternately, you can add a `story=URL` search parameter when you load the page,
+and the story will be populated from that URL. Ex:
+
+```
+https://guidedtyping.com/?story=https://mydomain.com/docs/story.md
+```
+
 ## Keyboard Layouts
+
+The app supports changing keyboard layouts at runtime, though currently I only
+have a definition written for `US_QWERTY`. 
 
 The `DisplayKeyboard` web component in
 [`js/display-keyboard.mjs`](https://github.com/jessepav/guided-typing/blob/master/js/display-keyboard.mjs)
-supports adding keyboard layouts at runtime, though currently I only have a
-definition written for `US_QWERTY`. I'm happy to merge PRs for alternate
-layouts.
+already has the infrastructure in place to (relatively) easily add new layouts
+for Latin-script keyboards, and I'm happy to merge PRs. Take a look at the
+`US_QWERTY_DEF` layout for a sample and documentation.
