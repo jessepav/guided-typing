@@ -111,20 +111,20 @@ function layoutButtonClicked(ev) {
     layoutDialog.close();
 }
 
-function processTextInput(textarea, sectionText, successCheck, keyboard) {
+function processTextInput(textarea, expandedText, successCheck, keyboard) {
     const t = textarea.value;
-    if (!sectionText.startsWith(t)) {
+    if (!expandedText.startsWith(t)) {
         textarea.style.setProperty("color", "var(--error-color)");
         keyboard.highlightKeys('Backspace');
     } else {
-        if (t.length == sectionText.length) {
+        if (t.length == expandedText.length) {
             textarea.style.setProperty("color", "var(--success-color)");
             successCheck.style.display = "block";
             keyboard.highlightKeys();
         } else {
             textarea.style.removeProperty("color");
             successCheck.style.removeProperty("display");
-            const nextChar = sectionText[t.length];
+            const nextChar = expandedText[t.length];
             keyboard.highlightKeysForChar(nextChar);
         }
     }
@@ -219,15 +219,21 @@ function main() {
                 if (breakIdx != -1)
                     textarea.placeholder = sectionText.slice(0, breakIdx) + ' ...';
 
+                // we have to lazily set expandedText in the focus handler, because the keyboard
+                // will only initialize itself the first time it's connected to the DOM.
+                let expandedText;
+
                 // When the textarea is focused, place the keyboard below it and scroll to its section
                 textarea.addEventListener('focus', ev => {
                     if (textarea.nextElementSibling != keyboard)
                         textarea.after(keyboard);
                     sectionEl.scrollIntoView(true);
-                    processTextInput(textarea, sectionText, successCheck, keyboard);
+                    if (!expandedText)
+                        expandedText = keyboard.expandDeadKeysFunc(sectionText);
+                    processTextInput(textarea, expandedText, successCheck, keyboard);
                 });
                 textarea.addEventListener('input', ev => {
-                    processTextInput(textarea, sectionText, successCheck, keyboard);
+                    processTextInput(textarea, expandedText, successCheck, keyboard);
                 });
 
                 const inputHolder = document.createElement("div");

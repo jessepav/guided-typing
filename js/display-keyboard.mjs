@@ -90,6 +90,10 @@ const US_QWERTY_DEF = {
         'n', 'm', ',', '.', '/', 'Shift_R',
         'Alt_R', 'Ctrl_R',
     ],
+    // see the comment for processKeyboardDef() for a description of expandDeadKeysFunc()
+    expandDeadKeysFunc(text) {
+        return text;
+    }
 };
 
 /* processKeyboardDef() {{{1
@@ -116,6 +120,13 @@ these properties:
 
     a Map from each key's shifted name to its canonical name. A key is included
     only if its shifted name is different from its plain name.
+
+  expandDeadKeysFunc(text):
+
+    a function that expands characters in text which require the use of dead keys
+    into the constituent key presses needed to produce them. For instance, if
+    producing "é" requires pressing "'" and then "e", this function would replace
+    all instance of "é" in text with the two character sequence "'e".
 
   keyboardHTML:
 
@@ -204,6 +215,7 @@ function processKeyboardDef(def) {
         canonicalNameMap,
         plainNameMap,
         shiftedNameMap,
+        expandDeadKeysFunc: def.expandDeadKeysFunc,
         keyboardHTML: htmlParts.join('\n')
     };
 }
@@ -279,7 +291,7 @@ const COMPONENT_CSS = `
 const keyboardDefMap = new Map();
 
 // Maps the name of a layout to its data object (lazily populated):
-//  { canonicalNameMap, plainNameMap, shiftedNameMap, templateEl }
+//  { canonicalNameMap, plainNameMap, shiftedNameMap, expandDeadKeysFunc, templateEl }
 const keyboardDataMap = new Map();
 
 function addKeyboardDef(layoutName, keyboardDef) {
@@ -298,11 +310,11 @@ function getLayoutNames() {
 function getKeyboardData(layoutName) {
     let keyboardData = keyboardDataMap.get(layoutName);
     if (!keyboardData) {
-        const { canonicalNameMap, plainNameMap, shiftedNameMap, keyboardHTML } =
+        const { canonicalNameMap, plainNameMap, shiftedNameMap, expandDeadKeysFunc, keyboardHTML } =
             processKeyboardDef(keyboardDefMap.get(layoutName));
         const templateEl = document.createElement('template');
         templateEl.innerHTML = COMPONENT_CSS + keyboardHTML;
-        keyboardData = { canonicalNameMap, plainNameMap, shiftedNameMap, templateEl };
+        keyboardData = { canonicalNameMap, plainNameMap, shiftedNameMap, expandDeadKeysFunc, templateEl };
         keyboardDataMap.set(layoutName, keyboardData);
     }
     return keyboardData;
@@ -337,6 +349,7 @@ class DisplayKeyboard extends HTMLElement
         this.canonicalNameMap = keyboardData.canonicalNameMap;
         this.plainNameMap = keyboardData.plainNameMap;
         this.shiftedNameMap = keyboardData.shiftedNameMap;
+        this.expandDeadKeysFunc = keyboardData.expandDeadKeysFunc;
 
         this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(keyboardData.templateEl.content.cloneNode(true));
@@ -364,9 +377,9 @@ class DisplayKeyboard extends HTMLElement
     // Highlights all the keys necessary to produce a character, taking into account left and right shift
     highlightKeysForChar(char) {
         const keys = [char];
-        const cname = this.shiftedNameMap.get(char);
-        if (cname) {
-            const hand = this.canonicalNameMap.get(cname).hand;
+        const cnameShifted = this.shiftedNameMap.get(char);
+        if (cnameShifted) {
+            const hand = this.canonicalNameMap.get(cnameShifted).hand;
             if (hand == 'l')
                 keys.push('Shift_R');
             else if (hand == 'r')
