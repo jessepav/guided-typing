@@ -115,7 +115,7 @@ function processTextInput(textarea, expandedText, successCheck, keyboard) {
     const t = textarea.value;
     if (!expandedText.startsWith(t)) {
         textarea.style.setProperty("color", "var(--error-color)");
-        keyboard.highlightKeys('Backspace');
+        keyboard.highlightKeys('\b');
     } else {
         if (t.length == expandedText.length) {
             textarea.style.setProperty("color", "var(--success-color)");
@@ -206,9 +206,6 @@ function main() {
         let nextEl = sectionEl.nextElementSibling;
         if (selected) {
             if (!nextEl || !nextEl.classList.contains("input-holder")) {
-                const successCheck = document.createElement("span");
-                successCheck.className = 'success-check';
-
                 const textarea = document.createElement("textarea");
                 textarea.style.height = `${sectionEl.offsetHeight}px`;
                 // Use the first two words of the section text as a placeholder
@@ -219,32 +216,33 @@ function main() {
                 if (breakIdx != -1)
                     textarea.placeholder = sectionText.slice(0, breakIdx) + ' ...';
 
-                // we have to lazily set expandedText in the focus handler, because the keyboard
-                // will only initialize itself the first time it's connected to the DOM.
-                let expandedText;
+                const inputHolder = document.createElement("div");
+                inputHolder.className = "input-holder";
+                inputHolder.append(textarea);
+                inputHolder.append(keyboard);
+                const successCheck = document.createElement("span");
+                successCheck.className = 'success-check';
+                sectionEl.after(inputHolder);    // inputHolder will be the sibling of sectionEl
+                sectionEl.append(successCheck);  // successCheck is a child of sectionEl
+
+                const expandedText = keyboard.expandDeadKeys(sectionText);
 
                 // When the textarea is focused, place the keyboard below it and scroll to its section
                 textarea.addEventListener('focus', ev => {
                     if (textarea.nextElementSibling != keyboard)
                         textarea.after(keyboard);
                     sectionEl.scrollIntoView(true);
-                    if (!expandedText)
-                        expandedText = keyboard.expandDeadKeysFunc(sectionText);
                     processTextInput(textarea, expandedText, successCheck, keyboard);
                 });
                 textarea.addEventListener('input', ev => {
                     processTextInput(textarea, expandedText, successCheck, keyboard);
                 });
 
-                const inputHolder = document.createElement("div");
-                inputHolder.className = "input-holder";
-                inputHolder.append(textarea);
-                sectionEl.after(inputHolder);
-                sectionEl.append(successCheck);
-                nextEl = inputHolder;
+                textarea.focus();
+            } else {
+                nextEl.style.removeProperty("display");
+                nextEl.querySelector("textarea").focus();
             }
-            nextEl.style.removeProperty("display");
-            nextEl.querySelector("textarea").focus();
         } else {
             if (nextEl.classList.contains("input-holder"))
                 nextEl.style.display = "none";
