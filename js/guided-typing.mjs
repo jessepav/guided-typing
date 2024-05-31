@@ -111,7 +111,7 @@ function layoutButtonClicked(ev) {
     layoutDialog.close();
 }
 
-function processTextInput(textarea, expandedText, successCheck, keyboard) {
+function processTextInput(textarea, expandedText, successCheck, keyboard, inhibitAutofill) {
     const t = textarea.value;
     if (!expandedText.startsWith(t)) {
         textarea.style.setProperty("color", "var(--error-color)");
@@ -128,11 +128,15 @@ function processTextInput(textarea, expandedText, successCheck, keyboard) {
             const keys = keyboard.keysForChar(nextChar);
             if (keys)  // the keyboard can produce this character
                 keyboard.highlightKeys(keys);
-            else  // type it for the user
-                setTimeout(() => {
-                    textarea.value += nextChar;
-                    processTextInput(textarea, expandedText, successCheck, keyboard);
-                }, 250);
+            else {
+                keyboard.highlightKeys();
+                if (!inhibitAutofill) {  // type it for the user
+                    setTimeout(() => {
+                        textarea.value += nextChar;
+                        processTextInput(textarea, expandedText, successCheck, keyboard);
+                    }, 250);
+                }
+            }
         }
     }
 }
@@ -258,7 +262,7 @@ async function main() {
                     processTextInput(textarea, expandedText, successCheck, keyboard);
                 });
                 textarea.addEventListener('input', ev => {
-                    processTextInput(textarea, expandedText, successCheck, keyboard);
+                    processTextInput(textarea, expandedText, successCheck, keyboard, !ev.data);
                 });
 
                 textarea.focus();
