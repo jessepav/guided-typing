@@ -369,17 +369,22 @@ class DisplayKeyboard extends HTMLElement
     disconnectedCallback() {
     }
 
-    // Highlight all the keys with the given canonical names (clearing already highlighted keys)
-    highlightKeys(...cnames) {
+    // Clear all highlights and then highlight the keys with the canonical names given in cnames
+    highlightKeys(cnames) {
         this.shadowRoot.querySelectorAll("div.key.highlighted").forEach(el => { el.classList.remove('highlighted'); });
-        for (const name of cnames)
-            this.shadowRoot.getElementById(this.nameIdMap.get(name)).classList.add('highlighted');
+        if (cnames) {
+            for (const name of cnames) {
+                const id = this.nameIdMap.get(name);
+                if (id)
+                    this.shadowRoot.getElementById(id).classList.add('highlighted');
+            }
+        }
     }
 
     // Highlights all the keys necessary to produce a character
     highlightKeysForChar(c) {
         const cnames = this.keysForChar(c);
-        this.highlightKeys(...cnames);
+        this.highlightKeys(cnames);
     }
 }
 
