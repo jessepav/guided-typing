@@ -125,7 +125,14 @@ function processTextInput(textarea, expandedText, successCheck, keyboard) {
             textarea.style.removeProperty("color");
             successCheck.style.removeProperty("display");
             const nextChar = expandedText[t.length];
-            keyboard.highlightKeysForChar(nextChar);
+            const keys = keyboard.keysForChar(nextChar);
+            if (keys.length)  // the keyboard can produce this character
+                keyboard.highlightKeys(keys);
+            else  // type it for the user
+                setTimeout(() => {
+                    textarea.value += nextChar;
+                    processTextInput(textarea, expandedText, successCheck, keyboard);
+                }, 250);
         }
     }
 }
