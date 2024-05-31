@@ -158,7 +158,7 @@ const US_QWERTY_DEF = {
     // into the constituent key presses needed to produce them. For instance, if
     // producing "é" requires pressing "'" and then "e", this function would replace
     // all instance of "é" in text with the two character sequence "'e".
-    expandDeadKeysFunc(text) {
+    expandDeadKeys(text) {
         return text;
     }
 };
@@ -269,14 +269,14 @@ class DisplayKeyboard extends HTMLElement
             this.layoutName = 'US_QWERTY';
         this.setAttribute("layout", this.layoutName);
 
-        const keyboardData = getKeyboardData(this.layoutName);
-        this.canonicalNameMap = keyboardData.canonicalNameMap;
-        this.plainNameMap = keyboardData.plainNameMap;
-        this.shiftedNameMap = keyboardData.shiftedNameMap;
-        this.expandDeadKeysFunc = keyboardData.expandDeadKeysFunc;
+        const kdef = keyboardDefMap.get(this.layoutName);
+        const kdata = getKeyboardData(this.layoutName);
+        this.nameIdMap = kdata.nameIdMap;
+        this.expandDeadKeys = kdef.expandDeadKeys;
+        this.keysForChar = kdef.keysForChar;
 
         this.attachShadow({ mode: 'open' });
-        this.shadowRoot.appendChild(keyboardData.templateEl.content.cloneNode(true));
+        this.shadowRoot.appendChild(kdata.templateEl.content.cloneNode(true));
 
         this.initialized = true;
     }
@@ -284,32 +284,17 @@ class DisplayKeyboard extends HTMLElement
     disconnectedCallback() {
     }
 
-    // Highlight keys with the given names
-    highlightKeys(...names) {
+    // Highlight all the keys with the given canonical names (clearing already highlighted keys)
+    highlightKeys(...cnames) {
         this.shadowRoot.querySelectorAll("div.key.highlighted").forEach(el => { el.classList.remove('highlighted'); });
-        for (const name of names) {
-            const canonicalName = this.canonicalNameMap.has(name) ? name :
-                                  this.plainNameMap.has(name) ? this.plainNameMap.get(name) :
-                                  this.shiftedNameMap.has(name) ? this.shiftedNameMap.get(name) : null;
-            if (canonicalName) {
-                const keyId = this.canonicalNameMap.get(canonicalName).id;
-                this.shadowRoot.getElementById(keyId).classList.add('highlighted');
-            }
-        }
+        for (const name of cnames)
+            this.shadowRoot.getElementById(this.nameIdMap.get(name)).classList.add('highlighted');
     }
 
-    // Highlights all the keys necessary to produce a character, taking into account left and right shift
-    highlightKeysForChar(char) {
-        const keys = [char];
-        const cnameShifted = this.shiftedNameMap.get(char);
-        if (cnameShifted) {
-            const hand = this.canonicalNameMap.get(cnameShifted).hand;
-            if (hand == 'l')
-                keys.push('Shift_R');
-            else if (hand == 'r')
-                keys.push('Shift_L');
-        }
-        this.highlightKeys(...keys);
+    // Highlights all the keys necessary to produce a character
+    highlightKeysForChar(c) {
+        const cnames = this.keysForChar(c);
+        this.highlightKeys(...cnames);
     }
 }
 
