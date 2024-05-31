@@ -211,12 +211,20 @@ async function main() {
     }
     showDocumentText(mdText);
 
+    let currentSectionEl;   // the section element that we most recently typed under
+
     document.body.addEventListener('click', ev => {
         const sectionEl = ev.target.closest("[data-story='section']");
         if (!sectionEl)
             return;
+        let selected = sectionEl.classList.contains("selected");
+        if (selected && sectionEl === currentSectionEl) {
+            // don't collapse current section - instead, refocus text area
+            currentSectionEl.nextElementSibling.querySelector("textarea").focus();
+            return;
+        }
         sectionEl.classList.toggle("selected");
-        const selected = sectionEl.classList.contains("selected");
+        selected = !selected;
         let nextEl = sectionEl.nextElementSibling;
         if (selected) {
             if (!nextEl || !nextEl.classList.contains("input-holder")) {
@@ -243,6 +251,7 @@ async function main() {
 
                 // When the textarea is focused, place the keyboard below it and scroll to its section
                 textarea.addEventListener('focus', ev => {
+                    currentSectionEl = sectionEl;
                     if (textarea.nextElementSibling != keyboard)
                         textarea.after(keyboard);
                     sectionEl.scrollIntoView(true);
