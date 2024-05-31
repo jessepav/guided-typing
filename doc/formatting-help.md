@@ -17,8 +17,19 @@ section.  Sections should be kept relatively short, because the section
 text, typing text area, and displayed keyboard should all fit on the
 screen at once.
 
+> The document is actually parsed as Markdown, though we only recognize
+> top-level paragraphs, H1/H2 headers, and horizontal rules; so if you
+> want to use Markdown syntax or embedded HTML tags *within* a
+> paragraph, go for it.
+>
+> If you don't know Markdown, just keep in mind one thing: if you want
+> a backslash `\` to appear in the text, you'll need to use two
+> backslashes `\\`.
+
+<!--
 > You can click the <img alt="document" src="img/document-icon.png" width="20">
 > icon at the top right of the story screen to edit this text again.
+-->
 
 ### Example Story
 
