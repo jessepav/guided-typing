@@ -115,7 +115,7 @@ function processTextInput(textarea, expandedText, successCheck, keyboard) {
     const t = textarea.value;
     if (!expandedText.startsWith(t)) {
         textarea.style.setProperty("color", "var(--error-color)");
-        keyboard.highlightKeys('\b');
+        keyboard.highlightKeys(['\b']);
     } else {
         if (t.length == expandedText.length) {
             textarea.style.setProperty("color", "var(--success-color)");
@@ -126,7 +126,7 @@ function processTextInput(textarea, expandedText, successCheck, keyboard) {
             successCheck.style.removeProperty("display");
             const nextChar = expandedText[t.length];
             const keys = keyboard.keysForChar(nextChar);
-            if (keys.length)  // the keyboard can produce this character
+            if (keys)  // the keyboard can produce this character
                 keyboard.highlightKeys(keys);
             else  // type it for the user
                 setTimeout(() => {

@@ -224,8 +224,9 @@ const US_QWERTY_DEF = {
         ],
     ],
 
-    // a function that returns an array of the canonical names of the keys that are
-    // required to produce a given character.
+    // A function that returns an array of the canonical names of the keys that are
+    // required to produce a given character, or undefined if the character cannot be
+    // produced with this keyboard.
     keysForChar(c) {
         if (US_QWERTY_PLAIN_CHARS.has(c))
             return c;
@@ -234,7 +235,7 @@ const US_QWERTY_DEF = {
         else if (US_QWERTY_LEFT_SHIFT_CHARS.has(c))
             return ['Shift_L', US_QWERTY_SHIFT_CHARS_CNAME_MAP.get(c)];
         else
-            return [];
+            return undefined;
     },
 
     // a function that expands characters in text which require the use of dead keys
