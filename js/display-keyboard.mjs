@@ -36,16 +36,40 @@ const COMPONENT_CSS = `
     }
 
     div.key {
-        display: flex;
-        flex-flow: column nowrap;
-        align-items: center;
-        justify-content: space-evenly;
         border: 1px solid black;
         background: linear-gradient(to bottom, #f5f3f3, #d5d5d5);
-    }
 
-    div.key.highlighted {
-        background: #9393ff;
+        display: grid;
+        align-items: center;
+        justify-items: center;
+        align-content: space-evenly;
+        justify-content: space-evenly;
+
+        &[data-num-glyphs="1"] {
+            grid-template:
+                "a" 1fr / 1fr;
+        }
+
+        &[data-num-glyphs="2"] {
+            grid-template:
+                "b" 1fr
+                "a" 1fr / 1fr;
+        }
+
+        &[data-num-glyphs="3"], &[data-num-glyphs="4"] {
+            grid-template:
+                "b d" 1fr
+                "a c" 1fr / 1fr 1fr;
+        }
+
+        &.highlighted {
+            background: #9393ff;
+        }
+
+        & > span.key-label:nth-child(1) { grid-area: a; }
+        & > span.key-label:nth-child(2) { grid-area: b; }
+        & > span.key-label:nth-child(3) { grid-area: c; }
+        & > span.key-label:nth-child(4) { grid-area: d; }
     }
 
     span.key-label {
@@ -56,13 +80,64 @@ const COMPONENT_CSS = `
 
     @container keyboard (min-width: 1px) {
         span.key-label { font-size: 6cqb; }
-        span.key-label.single { font-size: 8cqb; }
-        span.key-label.small-label { font-size: 6cqb; }
+
+        div.key[data-num-glyphs="1"] {
+            & > span.key-label { font-size: 8cqb; }
+            & > span.key-label.small-label { font-size: 6cqb; }
+        }
     }
     </style>
 `;
 
 // US_QWERTY_DEF {{{1
+
+// Data for use with keysForChar() below {{{
+
+// These are the characters for which we do not need any modifier keys
+const US_QWERTY_PLAIN_CHARS = new Set(
+    "`1234567890-=\b" +
+    "\tqwertyuiop[]\\" +
+    "asdfghjkl;'\n" +
+    "zxcvbnm,./" +
+    " "
+);
+
+// These are the characters for which we need the right shift key
+const US_QWERTY_RIGHT_SHIFT_CHARS = new Set(
+    '~!@#$%^' +
+    'QWERT' +
+    'ASDFG' +
+    'ZXCVB'
+);
+
+// These are the characters for which we need the left shift key
+const US_QWERTY_LEFT_SHIFT_CHARS = new Set(
+    '&*()_+' +
+    'YUIOP{}|' +
+    'HJKL:"' +
+    'NM<>?'
+);
+
+// A map from a char that requires shift to the canonical name of the key
+// that needs to be pressed along with shift.
+const US_QWERTY_SHIFT_CHARS_CNAME_MAP = (() => {
+    const plainChars =
+        "`1234567890-=" +
+        "qwertyuiop[]\\" +
+        "asdfghjkl;'" +
+        "zxcvbnm,./";
+    const shiftChars =
+        '~!@#$%^&*()_+' +
+        'QWERTYUIOP{}|' +
+        'ASDFGHJKL:"' +
+        'ZXCVBNM<>?';
+    const m = new Map();
+    for (let i = 0; i < shiftChars.length; i++)
+        m.set(shiftChars[i], plainChars[i]);
+    return m;
+})();
+
+// }}}
 
 const US_QWERTY_DEF = {
     /*
@@ -152,6 +227,14 @@ const US_QWERTY_DEF = {
     // a function that returns an array of the canonical names of the keys that are
     // required to produce a given character.
     keysForChar(c) {
+        if (US_QWERTY_PLAIN_CHARS.has(c))
+            return c;
+        else if (US_QWERTY_RIGHT_SHIFT_CHARS.has(c))
+            return ['Shift_R', US_QWERTY_SHIFT_CHARS_CNAME_MAP.get(c)];
+        else if (US_QWERTY_LEFT_SHIFT_CHARS.has(c))
+            return ['Shift_L', US_QWERTY_SHIFT_CHARS_CNAME_MAP.get(c)];
+        else
+            return [];
     },
 
     // a function that expands characters in text which require the use of dead keys
@@ -159,7 +242,7 @@ const US_QWERTY_DEF = {
     // producing "é" requires pressing "'" and then "e", this function would replace
     // all instance of "é" in text with the two character sequence "'e".
     expandDeadKeys(text) {
-        return text;
+        return text;  // US QWERTY has no dead keys
     }
 };
 
@@ -185,13 +268,15 @@ function generateKeyboardHTML(def) {
     for (const row of def.layout) {
         htmlParts.push("<div class='keyboard-row'>");
         for (const key of row) {
-            const [cname, size, ...glyphs] = key;
+            let [cname, size, ...glyphs] = key;
             if (!cname) {  // a blank key
                 htmlParts.push(`<div class='key' style='flex: ${size} 0px;'></div>`);
             } else {
                 const keyId = genId();
                 nameIdMap.set(cname, keyId);
-                htmlParts.push(`<div id='${keyId}' class='key' style='flex: ${size} 0px;'>`);
+                if (glyphs.length == 2 && glyphs[0].toUpperCase() == glyphs[1].toUpperCase())
+                    glyphs = [glyphs[0].toUpperCase()];  // show only uppercase letter on letter keys
+                htmlParts.push(`<div id='${keyId}' class='key' data-num-glyphs='${glyphs.length}' style='flex: ${size} 0px;'>`);
                 let extraClasses = '';
                 if (cname == '\b') // make the backspace label smaller than it would be
                     extraClasses += ' small-label';
