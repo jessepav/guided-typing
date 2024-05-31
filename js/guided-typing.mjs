@@ -187,7 +187,7 @@ function parseMarkdownDoc(mdText) {
     return docDiv;
 }
 
-function main() {
+async function main() {
     docIcon.addEventListener('click', showSettingsScreen);
     settingsButtonHolder.addEventListener('click', settingsButtonClicked);
     settingsHolder.addEventListener('keydown', ev => {
@@ -201,7 +201,14 @@ function main() {
     keyboardIcon.addEventListener('click', showLayoutDialog);
     layoutButtonHolder.addEventListener('click', layoutButtonClicked);
 
-    const mdText = localStorage.getItem(STORAGE_KEY) ?? DEFAULT_MDTEXT;
+    let mdText;
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.has("story")) {
+        const response = await fetch(searchParams.get("story"));
+        mdText = await response.text();
+    } else {
+        mdText = localStorage.getItem(STORAGE_KEY) ?? DEFAULT_MDTEXT;
+    }
     showDocumentText(mdText);
 
     document.body.addEventListener('click', ev => {
