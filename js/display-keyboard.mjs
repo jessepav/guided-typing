@@ -107,53 +107,35 @@ const US_QWERTY_PLAIN_CHARS = new Set(
     " "
 );
 
-// These are the characters for which we need the right shift key
-const US_QWERTY_RIGHT_SHIFT_CHARS = new Set(
-    '~!@#$%^' +
-    'QWERT' +
-    'ASDFG' +
-    'ZXCVB'
-);
+// A map from the characters for which we need the right shift key to
+// the canonical name of the key that needs to be pressed along with shift.
+const US_QWERTY_RIGHT_SHIFT_CNAME_MAP = new Map([
+    ["~", "`"], ["!", "1"], ["@", "2"], ["#", "3"], ["$", "4"], ["%", "5"], ["^", "6"],
+    ["Q", "q"], ["W", "w"], ["E", "e"], ["R", "r"], ["T", "t"],
+    ["A", "a"], ["S", "s"], ["D", "d"], ["F", "f"], ["G", "g"],
+    ["Z", "z"], ["X", "x"], ["C", "c"], ["V", "v"], ["B", "b"]
+]);
 
-// These are the characters for which we need the left shift key
-const US_QWERTY_LEFT_SHIFT_CHARS = new Set(
-    '&*()_+' +
-    'YUIOP{}|' +
-    'HJKL:"' +
-    'NM<>?'
-);
-
-// A map from a char that requires shift to the canonical name of the key
-// that needs to be pressed along with shift.
-const US_QWERTY_SHIFT_CHARS_CNAME_MAP = (() => {
-    const plainChars =
-        "`1234567890-=" +
-        "qwertyuiop[]\\" +
-        "asdfghjkl;'" +
-        "zxcvbnm,./";
-    const shiftChars =
-        '~!@#$%^&*()_+' +
-        'QWERTYUIOP{}|' +
-        'ASDFGHJKL:"' +
-        'ZXCVBNM<>?';
-    const m = new Map();
-    for (let i = 0; i < shiftChars.length; i++)
-        m.set(shiftChars[i], plainChars[i]);
-    return m;
-})();
+// A map from the characters for which we need the left shift key to
+// the canonical name of the key that needs to be pressed along with shift.
+const US_QWERTY_LEFT_SHIFT_CNAME_MAP = new Map([
+    ["&", "7"], ["*", "8"], ["(", "9"], [")", "0"], ["_", "-"], ["+", "="],
+    ["Y", "y"], ["U", "u"], ["I", "i"], ["O", "o"], ["P", "p"], ["{", "["], ["}", "]"], ["|", "\\"],
+    ["H", "h"], ["J", "j"], ["K", "k"], ["L", "l"], [":", ";"], ["\"", "'"],
+    ["N", "n"], ["M", "m"], ["<", ","], [">", "."], ["?", "/"]
+]);
 
 // }}}
 
 const US_QWERTY_DEF = {
     /*
-     * The physical layout of the keyboard, given as nested arrays.
-     * The outer array lists rows from top to bottom.
-     * Within each row, each entry is of the form:
+     * The physical layout of the keyboard, given as nested arrays. The outer array lists
+     * rows from top to bottom. Within each row, each entry is of the form:
      *
-     *   [canonical name, relative width, ...glyphs (0 to 4)]
+     *   [canonical name, relative width within the row, ...glyphs (0 to 4)]
      *
-     * If the canonical name is falsy, the key will be rendered blank
-     * in the generated HTML and won't be used for productions.
+     * If the canonical name is falsy, the key will be rendered blank in the generated
+     * HTML and won't be used for productions.
      */
     layout: [
         [
@@ -233,12 +215,13 @@ const US_QWERTY_DEF = {
     // required to produce a given character, or undefined if the character cannot be
     // produced with this keyboard.
     keysForChar(c) {
+        let cname;
         if (US_QWERTY_PLAIN_CHARS.has(c))
             return [c];
-        else if (US_QWERTY_RIGHT_SHIFT_CHARS.has(c))
-            return ['Shift_R', US_QWERTY_SHIFT_CHARS_CNAME_MAP.get(c)];
-        else if (US_QWERTY_LEFT_SHIFT_CHARS.has(c))
-            return ['Shift_L', US_QWERTY_SHIFT_CHARS_CNAME_MAP.get(c)];
+        else if (cname = US_QWERTY_RIGHT_SHIFT_CNAME_MAP.get(c))  // note the assignment =
+            return ['Shift_R', cname];
+        else if (cname = US_QWERTY_LEFT_SHIFT_CNAME_MAP.get(c))
+            return ['Shift_L', cname];
         else
             return undefined;
     },
