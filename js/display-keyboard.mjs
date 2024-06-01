@@ -2,6 +2,10 @@
 
 const COMPONENT_CSS = `
     <style>
+    * {
+        box-sizing: border-box;
+    }
+
     :host {
         display: block;
         contain: content;
@@ -18,7 +22,7 @@ const COMPONENT_CSS = `
         aspect-ratio: 11 / 3.5;
         border: 1px solid black;
         font-weight: bold;
-        font-family: sans-serif;
+        font-family: var(--sans-serif-family, sans-serif);
 
         display: flex;
         flex-flow: column nowrap;
@@ -37,7 +41,8 @@ const COMPONENT_CSS = `
 
     div.key {
         border: 1px solid black;
-        background: linear-gradient(to bottom, #f5f3f3, #d5d5d5);
+        background-color: #eaeaea;
+        transition: background-color 0.2s ease-in-out;
 
         display: grid;
         align-items: center;
@@ -63,7 +68,7 @@ const COMPONENT_CSS = `
         }
 
         &.highlighted {
-            background: #9393ff;
+            background-color: #9393ff;
         }
 
         & > span.key-label:nth-child(1) { grid-area: a; }
@@ -196,7 +201,7 @@ const US_QWERTY_DEF = {
             ['l', 1, 'l'],
             [';', 1, ';', ':'],
             ["'", 1, "'", '"'],
-            ['\n', 2.2, 'Enter'],
+            ['\n', 2.3, 'Enter'],
         ],
         [
             ['Shift_L', 2.5, 'Shift'],
@@ -216,7 +221,7 @@ const US_QWERTY_DEF = {
             ['Ctrl_L', 1.2, 'Ctrl'],
             ['', 1.2],
             ['Alt_L', 1.2, 'Alt'],
-            [' ', 6.6],
+            [' ', 6.7],
             ['Alt_R', 1.2, 'Alt'],
             ['', 1.2],
             ['', 1.2],
