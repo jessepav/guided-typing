@@ -139,7 +139,7 @@ function processTextInput(textarea, expandedText, successCheck, keyboard, inhibi
                 if (!inhibitAutofill) {  // type it for the user
                     setTimeout(() => {
                         textarea.value = t + nextChar;
-                        processTextInput(textarea, expandedText, successCheck, keyboard)
+                        processTextInput(textarea, expandedText, successCheck, keyboard);
                     }, 250);
                 }
             }
