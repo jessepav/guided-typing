@@ -5,6 +5,7 @@
 }
 
 body {
+  position: relative;
   margin: 0;
   padding: 0;
 }
@@ -310,4 +311,11 @@ body.settings {
     margin-top: 0.5em;
     text-align: right;
   }
+}
+
+#hit-counter-holder.main-invisible {
+  position: absolute;
+  visibility: hidden;
+  bottom: 0;
+  left: 0;
 }
