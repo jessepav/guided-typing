@@ -198,16 +198,17 @@ display-keyboard {
 }
 
 .settings-icons-holder {
-  position: absolute;
+  position: fixed;
   right: 5px;
   top: 5px;
 
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  row-gap: 10px;
+
   & > img {
     cursor: pointer;
-  }
-
-  img + img {
-    margin-left: 10px;
   }
 
   #doc-icon { width: 32px; }
