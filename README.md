@@ -33,6 +33,13 @@ and the story will be populated from that URL. Ex:
 https://guidedtyping.com/?story=https://mydomain.com/docs/story.md
 ```
 
+If you add a `replace` search parameter, at page load the browser URL will be
+rewritten to remove all search parameters. Ex.
+`?story=https://mydomain.com/docs/story.md&replace`.
+
+This is useful if you want to send someone a document, but don't want to have
+them *always* load the document if they bookmark your link.
+
 ## Keyboard Layouts
 
 The app supports changing keyboard layouts at runtime, though currently I only

@@ -8,6 +8,11 @@ const DEFAULT_MDTEXT = `
 
 Click on the document icon 🗎 at the top right of the page to edit your story,
 or click on this text to see how typing works.
+
+---
+
+You can also load a [sample kids' story](?story=samples/stories.md&replace)
+to play around with that.
 `;
 
 let keyboard = new DisplayKeyboard('US_QWERTY');
@@ -212,6 +217,8 @@ async function main() {
     if (searchParams.has("story")) {
         const response = await fetch(searchParams.get("story"));
         mdText = await response.text();
+        if (searchParams.has("replace"))
+            history.replaceState(null, "", location.origin + location.pathname);
     } else {
         mdText = localStorage.getItem(STORAGE_KEY) ?? DEFAULT_MDTEXT;
     }
@@ -220,6 +227,8 @@ async function main() {
     let currentSectionEl;   // the section element that we most recently typed under
 
     document.body.addEventListener('click', ev => {
+        if (ev.target.tagName == 'A')  // don't do anything if the user clicked a link
+            return;
         const sectionEl = ev.target.closest("[data-story='section']");
         if (!sectionEl)
             return;
