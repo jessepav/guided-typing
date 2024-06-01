@@ -6,10 +6,8 @@ const STORAGE_KEY = "guided-typing-story";
 const DEFAULT_MDTEXT = `
 # First Time Instructions
 
-Click on the document icon<img alt="document" src="img/document-icon.png"
-                               style="width: 20px; vertical-align: -0.2em; margin-left: 0.5ch;">
-at the top right of the page to edit your story, or click on this text to
-see how typing works.
+Click on the document icon 🗎 at the top right of the page to edit your story,
+or click on this text to see how typing works.
 `;
 
 let keyboard = new DisplayKeyboard('US_QWERTY');
@@ -124,16 +122,18 @@ function processTextInput(textarea, expandedText, successCheck, keyboard, inhibi
         } else {
             textarea.style.removeProperty("color");
             successCheck.style.removeProperty("display");
-            const nextChar = expandedText[t.length];
+            const nextChar = String.fromCodePoint(expandedText.codePointAt(t.length));
             const keys = keyboard.keysForChar(nextChar);
             if (keys)  // the keyboard can produce this character
                 keyboard.highlightKeys(keys);
             else {
                 keyboard.highlightKeys();
                 if (!inhibitAutofill) {  // type it for the user
+                    textarea.disabled = true;
                     setTimeout(() => {
                         textarea.value += nextChar;
-                        processTextInput(textarea, expandedText, successCheck, keyboard);
+                        textarea.disabled = false;
+                        textarea.focus();
                     }, 250);
                 }
             }
