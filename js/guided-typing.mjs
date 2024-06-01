@@ -52,11 +52,10 @@ async function showSettingsScreen() {
         settingsTextHelp.append(hcHolder);
         hcHolder.classList.remove("main-invisible");
     }
-    const noDisplayedText = !displayedText || Object.is(displayedText, DEFAULT_MDTEXT);
-    const mdText = noDisplayedText ? await fetch(INITIAL_STORY_URL).then(response => response.text())
-                                   : displayedText;
+    const mdText = !displayedText || Object.is(displayedText, DEFAULT_MDTEXT)
+                        ? await fetch(INITIAL_STORY_URL).then(response => response.text())
+                        : displayedText;
     settingsStoryTextarea.value = mdText;
-    settingsCancelButton.disabled = noDisplayedText;
     document.body.classList.add("settings");
 }
 
