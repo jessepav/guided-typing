@@ -129,11 +129,9 @@ function processTextInput(textarea, expandedText, successCheck, keyboard, inhibi
             else {
                 keyboard.highlightKeys();
                 if (!inhibitAutofill) {  // type it for the user
-                    textarea.disabled = true;
                     setTimeout(() => {
-                        textarea.value += nextChar;
-                        textarea.disabled = false;
-                        textarea.focus();
+                        textarea.value = t + nextChar;
+                        processTextInput(textarea, expandedText, successCheck, keyboard)
                     }, 250);
                 }
             }
