@@ -229,7 +229,7 @@ const US_QWERTY_DEF = {
     // produced with this keyboard.
     keysForChar(c) {
         if (US_QWERTY_PLAIN_CHARS.has(c))
-            return c;
+            return [c];
         else if (US_QWERTY_RIGHT_SHIFT_CHARS.has(c))
             return ['Shift_R', US_QWERTY_SHIFT_CHARS_CNAME_MAP.get(c)];
         else if (US_QWERTY_LEFT_SHIFT_CHARS.has(c))
