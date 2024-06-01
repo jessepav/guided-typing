@@ -116,6 +116,7 @@ function processTextInput(textarea, expandedText, successCheck, keyboard, inhibi
     const t = textarea.value;
     if (!expandedText.startsWith(t)) {
         textarea.style.setProperty("color", "var(--error-color)");
+        successCheck.style.removeProperty("display");
         keyboard.highlightKeys(['\b']);
     } else {
         if (t.length == expandedText.length) {
