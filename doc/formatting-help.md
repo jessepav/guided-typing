@@ -78,8 +78,8 @@ big smile.
 
 ### Project Information
 
-© Jesse Pavel (<jpavel@gmail.com>)
+© Jesse Pavel (<a href="mailto:jpavel@gmail.com" target="_blank">jpavel@gmail.com</a>)
 
-<https://github.com/jessepav/guided-typing/>
+<a href="https://github.com/jessepav/guided-typing/" target="_blank">https://github.com/jessepav/guided-typing/</a>
 
 <!-- vim: set tw=72 : -->
