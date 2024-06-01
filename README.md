@@ -18,7 +18,7 @@ In the below screenshot, you see how the app shows which keys need to be pressed
 next, taking into account the left and right shift keys, to continue typing the
 active text section.
 
-![App screenshot](https://github.com/jessepav/guided-typing/blob/master/doc/guided-typing-screenshot.png)
+<img alt="App screenshot" src="https://github.com/jessepav/guided-typing/blob/master/doc/guided-typing-screenshot.png" width="600">
 
 ## Entering Your Own Text
 
