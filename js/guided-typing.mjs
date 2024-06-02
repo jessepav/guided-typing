@@ -2,7 +2,8 @@ import { DisplayKeyboard, addKeyboardDef, getLayoutNames } from './display-keybo
 
 const HELP_URL = "doc/formatting-help.md";
 const INITIAL_STORY_URL = "samples/initial-sample.md";
-const STORAGE_KEY = "guided-typing-story";
+const STORY_STORAGE_KEY = "guided-typing-story";
+const KEYBOARD_LAYOUT_STORAGE_KEY = "guided-typing-keyboard-layout";
 const DEFAULT_MDTEXT = `
 # First Time Instructions
 
@@ -16,8 +17,6 @@ to play around with that.
 `;
 
 const siteBaseUrl = location.origin + location.pathname;
-
-let keyboard = new DisplayKeyboard('US_QWERTY');
 
 const documentHolder = document.getElementById('document-holder');
 const settingsHolder = document.getElementById('settings-holder');
@@ -36,6 +35,8 @@ const mdit = window.markdownit({
     html: true,
     typographer: false,
 });
+
+let keyboard;  // our single instance of DisplayKeyboard
 
 let siteNameEl;
 let displayedText;
@@ -74,7 +75,7 @@ function settingsButtonClicked(ev) {
     if (command == 'save') {
         const mdText = settingsStoryTextarea.value;
         if (mdText) {
-            localStorage.setItem(STORAGE_KEY, mdText);
+            localStorage.setItem(STORY_STORAGE_KEY, mdText);
             showDocumentText(mdText);
             document.body.classList.remove("settings");
         }
@@ -118,6 +119,7 @@ function layoutButtonClicked(ev) {
             if (keyboard.parentElement)
                 keyboard.replaceWith(newKeyboard);
             keyboard = newKeyboard;
+            localStorage.setItem(KEYBOARD_LAYOUT_STORAGE_KEY, newLayoutName);
         }
         break;
       case 'cancel':
@@ -229,9 +231,11 @@ async function main() {
         if (searchParams.has("replace"))
             history.replaceState(null, "", siteBaseUrl);
     } else {
-        mdText = localStorage.getItem(STORAGE_KEY) ?? DEFAULT_MDTEXT;
+        mdText = localStorage.getItem(STORY_STORAGE_KEY) ?? DEFAULT_MDTEXT;
     }
     showDocumentText(mdText);
+
+    keyboard = new DisplayKeyboard(localStorage.getItem(KEYBOARD_LAYOUT_STORAGE_KEY) ?? 'US_QWERTY');
 
     let currentSectionEl;   // the section element that we most recently typed under
 
