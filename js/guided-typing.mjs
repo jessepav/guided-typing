@@ -3,8 +3,7 @@ import { DisplayKeyboard, addKeyboardDef, getLayoutNames } from './display-keybo
 const HELP_URL = "doc/formatting-help.md";
 const INITIAL_STORY_URL = "samples/initial-sample.md";
 const STORY_STORAGE_KEY = "guided-typing-story";
-const KEYBOARD_LAYOUT_STORAGE_KEY = "guided-typing-keyboard-layout";
-const SHOW_WPM_STORAGE_KEY = "guided-typing-show-wpm";
+const CONFIG_STORAGE_KEY = "guided-typing-config";
 const DEFAULT_MDTEXT = `
 # First Time Instructions
 
@@ -80,16 +79,21 @@ async function showSettingsScreen() {
 
 function settingsButtonClicked(ev) {
     const command = ev.target.dataset.command;
-    if (command == 'save') {
-        const mdText = settingsStoryTextarea.value;
-        if (mdText) {
+    if (!command)
+        return;
+    switch (command) {
+      case 'save':
+        let mdText = settingsStoryTextarea.value;
+        if (mdText)
             localStorage.setItem(STORY_STORAGE_KEY, mdText);
-            showDocumentText(mdText);
-            document.body.classList.remove("settings");
-        }
-    } else if (command == 'cancel') {
-        document.body.classList.remove("settings");
+        else
+            mdText = DEFAULT_MDTEXT;
+        showDocumentText(mdText);
+        break;
+      case 'cancel':
+        break;
     }
+    document.body.classList.remove("settings");
 }
 
 function showLayoutDialog() {
@@ -127,7 +131,7 @@ function layoutButtonClicked(ev) {
             if (keyboard.parentElement)
                 keyboard.replaceWith(newKeyboard);
             keyboard = newKeyboard;
-            localStorage.setItem(KEYBOARD_LAYOUT_STORAGE_KEY, newLayoutName);
+            saveConfig();
         }
         break;
       case 'cancel':
@@ -230,6 +234,23 @@ function parseMarkdownDoc(mdText) {
     return docDiv;
 }
 
+function loadConfig() {
+    const jsonConfig = localStorage.getItem(CONFIG_STORAGE_KEY);
+    const config = jsonConfig ? JSON.parse(jsonConfig) : {};
+    return {
+        keyboardLayout: config.keyboardLayout ?? 'US_QWERTY',
+        showWPM: config.showWPM ?? false,
+    };
+}
+
+function saveConfig() {
+    const config = {
+        keyboardLayout: keyboard.layoutName,
+        showWPM,
+    };
+    localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config));
+}
+
 async function main() {
     docIcon.addEventListener('click', showSettingsScreen);
     settingsButtonHolder.addEventListener('click', settingsButtonClicked);
@@ -256,13 +277,14 @@ async function main() {
     }
     showDocumentText(mdText);
 
-    keyboard = new DisplayKeyboard(localStorage.getItem(KEYBOARD_LAYOUT_STORAGE_KEY) ?? 'US_QWERTY');
+    const config = loadConfig();
+    keyboard = new DisplayKeyboard(config.keyboardLayout);
+    showWPM = config.showWPM;
 
-    showWPM = localStorage.getItem(SHOW_WPM_STORAGE_KEY) === "true";
     wpmCheck.checked = showWPM;
     wpmCheck.addEventListener('change', () => {
         showWPM = wpmCheck.checked;
-        localStorage.setItem(SHOW_WPM_STORAGE_KEY, showWPM ? "true" : "false");
+        saveConfig();
         if (!showWPM)
             document.querySelectorAll(".success-check").forEach(el => { el.innerText = ''; });
     });
