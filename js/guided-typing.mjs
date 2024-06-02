@@ -4,6 +4,7 @@ const HELP_URL = "doc/formatting-help.md";
 const INITIAL_STORY_URL = "samples/initial-sample.md";
 const STORY_STORAGE_KEY = "guided-typing-story";
 const KEYBOARD_LAYOUT_STORAGE_KEY = "guided-typing-keyboard-layout";
+const SHOW_WPM_STORAGE_KEY = "guided-typing-show-wpm";
 const DEFAULT_MDTEXT = `
 # First Time Instructions
 
@@ -30,6 +31,7 @@ const settingsCancelButton = settingsHolder.querySelector("[data-command='cancel
 const layoutDialog = document.getElementById('keyboard-layout-dialog');
 const layoutSelect = document.getElementById('layout-select');
 const layoutButtonHolder = document.getElementById('layout-button-holder');
+const wpmCheck = document.getElementById('wpm-check');
 
 const mdit = window.markdownit({
     html: true,
@@ -37,6 +39,8 @@ const mdit = window.markdownit({
 });
 
 let keyboard;  // our single instance of DisplayKeyboard
+
+let showWPM;
 
 let siteNameEl;
 let displayedText;
@@ -128,8 +132,15 @@ function layoutButtonClicked(ev) {
     layoutDialog.close();
 }
 
+const wpmTimeStartMap = new WeakMap();
+
 function processTextInput(textarea, expandedText, successCheck, keyboard, inhibitAutofill) {
     const t = textarea.value;
+
+    // inhibitAutofill == true indicates we arrived here via a backspace or delete
+    if (showWPM && t.length == 1 && !inhibitAutofill)
+        wpmTimeStartMap.set(textarea, Date.now());
+
     if (!expandedText.startsWith(t)) {
         textarea.style.setProperty("color", "var(--error-color)");
         successCheck.style.removeProperty("display");
@@ -138,6 +149,12 @@ function processTextInput(textarea, expandedText, successCheck, keyboard, inhibi
         if (t.length == expandedText.length) {
             textarea.style.setProperty("color", "var(--success-color)");
             successCheck.style.display = "block";
+            if (showWPM && wpmTimeStartMap.has(textarea)) {
+                const elapsedMs = Date.now() - wpmTimeStartMap.get(textarea);
+                const wpm = Math.round(((t.length - 1) / 5) / (elapsedMs / 1000) * 60);
+                wpmTimeStartMap.delete(textarea);  // you'll need to start from the beginning to get a new WPM
+                successCheck.innerText = `(${wpm} wpm)`;
+            }
             keyboard.highlightKeys();
         } else {
             textarea.style.removeProperty("color");
@@ -236,6 +253,15 @@ async function main() {
     showDocumentText(mdText);
 
     keyboard = new DisplayKeyboard(localStorage.getItem(KEYBOARD_LAYOUT_STORAGE_KEY) ?? 'US_QWERTY');
+
+    showWPM = localStorage.getItem(SHOW_WPM_STORAGE_KEY) === "true";
+    wpmCheck.checked = showWPM;
+    wpmCheck.addEventListener('change', () => {
+        showWPM = wpmCheck.checked;
+        localStorage.setItem(SHOW_WPM_STORAGE_KEY, showWPM ? "true" : "false");
+        if (!showWPM)
+            document.querySelectorAll(".success-check").forEach(el => { el.innerText = ''; });
+    });
 
     let currentSectionEl;   // the section element that we most recently typed under
 

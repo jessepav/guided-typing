@@ -209,11 +209,13 @@ textarea {
   right: 5px;
   bottom: -4px;
   color: var(--success-color);
-  font-size: 1.2rem;
   display: none;
+  font-size: 0.8rem;
 
   &::before {
     content: "✓";
+    font-size: 1.2rem;
+    vertical-align: -2px;
   }
 }
 
@@ -223,7 +225,7 @@ display-keyboard {
 
 .settings-icons-holder {
   position: fixed;
-  right: 5px;
+  right: 2px;
   top: 5px;
   z-index: 1;
 
@@ -240,6 +242,13 @@ display-keyboard {
   #keyboard-icon {
     width: 50px;
     vertical-align: 6px;
+  }
+
+  .wpm-div {
+    font-size: 14px;
+    background: #e5e5e5;
+    padding: 2px 3px 0 0;
+    border-radius: 3px;
   }
 }
 
