@@ -288,7 +288,7 @@ async function main() {
 
     let currentSectionEl;   // the section element that we most recently typed under
 
-    document.body.addEventListener('click', ev => {
+    documentHolder.addEventListener('click', ev => {
         if (ev.target.tagName == 'A')  // don't do anything if the user clicked a link
             return;
         const sectionEl = ev.target.closest("[data-story='section']");
@@ -348,6 +348,17 @@ async function main() {
                 nextEl.style.display = "none";
         }
         sectionEl.scrollIntoView(true);
+    });
+    documentHolder.addEventListener('keydown', ev => {
+        if (ev.key == "Escape") {
+            const focusedEl = document.activeElement;
+            if (focusedEl?.tagName == 'TEXTAREA') {
+                ev.preventDefault();
+                ev.stopPropagation();
+                focusedEl.value = '';
+                focusedEl.dispatchEvent(new InputEvent('input', { bubbles: true, data: null }));
+            }
+        }
     });
 }
 
