@@ -66,9 +66,6 @@ async function showSettingsScreen() {
         const response = await fetch(HELP_URL);
         const helpMd = await response.text();
         settingsTextHelp.innerHTML = mdit.render(helpMd);
-        const hcHolder = document.getElementById('hit-counter-holder');
-        settingsTextHelp.append(hcHolder);
-        hcHolder.classList.remove("main-invisible");
     }
     const mdText = !displayedText || Object.is(displayedText, DEFAULT_MDTEXT)
                         ? await fetch(INITIAL_STORY_URL).then(response => response.text())

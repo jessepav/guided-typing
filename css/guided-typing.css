@@ -345,10 +345,3 @@ body.settings {
     text-align: right;
   }
 }
-
-#hit-counter-holder.main-invisible {
-  position: absolute;
-  visibility: hidden;
-  bottom: 0;
-  left: 0;
-}
