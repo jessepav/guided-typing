@@ -7,7 +7,7 @@ const KEYBOARD_LAYOUT_STORAGE_KEY = "guided-typing-keyboard-layout";
 const DEFAULT_MDTEXT = `
 # First Time Instructions
 
-Click on the document icon 🗎 at the top right of the page to edit your story,
+Click on the document icon &#x1f5ce; at the top right of the page to edit your story,
 or click on this text to see how typing works.
 
 ---
