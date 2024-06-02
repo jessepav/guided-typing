@@ -15,6 +15,8 @@ You can also load a [sample kids' story](?story=samples/stories.md&replace)
 to play around with that.
 `;
 
+const siteBaseUrl = location.origin + location.pathname;
+
 let keyboard = new DisplayKeyboard('US_QWERTY');
 
 const documentHolder = document.getElementById('document-holder');
@@ -35,11 +37,19 @@ const mdit = window.markdownit({
     typographer: false,
 });
 
+let siteNameEl;
 let displayedText;
 
 function showDocumentText(mdText) {
+    if (!siteNameEl) {
+        const siteName = siteBaseUrl.replace("https://", "").replace(/\/(?:index\.html)?$/, "");
+        siteNameEl = document.createElement('div');
+        siteNameEl.className = "site-name";
+        siteNameEl.innerHTML = `<a href="${siteBaseUrl}">${siteName}</a>`;
+    }
     const docDiv = parseMarkdownDoc(mdText);
     documentHolder.replaceChildren(docDiv);
+    documentHolder.prepend(siteNameEl);
     displayedText = mdText;
 }
 
@@ -217,7 +227,7 @@ async function main() {
         const response = await fetch(searchParams.get("story"));
         mdText = await response.text();
         if (searchParams.has("replace"))
-            history.replaceState(null, "", location.origin + location.pathname);
+            history.replaceState(null, "", siteBaseUrl);
     } else {
         mdText = localStorage.getItem(STORAGE_KEY) ?? DEFAULT_MDTEXT;
     }
