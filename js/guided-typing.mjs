@@ -8,8 +8,12 @@ const SHOW_WPM_STORAGE_KEY = "guided-typing-show-wpm";
 const DEFAULT_MDTEXT = `
 # First Time Instructions
 
-Click on the document icon &#x1f5ce; at the top right of the page to edit your story,
+<p style="font-size: 95%;">
+Click on the document icon<img alt="document" src="img/document-icon.png"
+                               style="width: 20px; vertical-align: -0.2em; margin-left: 0.5ch;">
+at the top right of the page to edit your story,
 or click on this text to see how typing works.
+</p>
 
 ---
 
