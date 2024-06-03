@@ -48,12 +48,12 @@ html {
       text-decoration: none;
     }
   }
-}
 
-@media (width < 920px) {
-  #document-holder > .site-name {
-    right: unset;
-    left: 5px;
+  @media (width < 920px) {
+    & > .site-name {
+      right: unset;
+      left: 5px;
+    }
   }
 }
 
@@ -343,5 +343,20 @@ body.settings {
   #layout-button-holder {
     margin-top: 0.5em;
     text-align: right;
+  }
+}
+
+@media (width < 600px) {
+  html {
+    font-size: 14px;
+  }
+
+  #document-holder {
+    padding: 3rem 8px;
+  }
+
+  .settings-icons-holder {
+    flex-flow: row nowrap;
+    column-gap: 10px;
   }
 }
