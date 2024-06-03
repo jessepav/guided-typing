@@ -204,6 +204,7 @@ section {
   border-bottom: 1px solid black;
   margin: 0;
   padding: 0px 8px;
+  overflow: hidden;
 }
 
 section:first-of-type {
