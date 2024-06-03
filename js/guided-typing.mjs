@@ -312,8 +312,8 @@ async function main() {
                 let breakIdx = sectionText.indexOf(' ');
                 if (breakIdx != -1)
                     breakIdx = sectionText.indexOf(' ', breakIdx + 1);
-                if (breakIdx != -1)
-                    textarea.placeholder = sectionText.slice(0, breakIdx) + ' ...';
+                textarea.placeholder = breakIdx != -1 ? sectionText.slice(0, breakIdx) + ' ...'
+                                                      : sectionText;  // otherwise all of it
 
                 const inputHolder = document.createElement("div");
                 inputHolder.className = "input-holder";
