@@ -1,7 +1,8 @@
 # A Chapter Title
 
 (This is a sample story: edit it as you wish,
- and then click the Save button below.)
+ or copy-paste in some text, and then click
+ the Save button below.)
 
 A paragraph of text. Paragraphs are separated
 from one another by a blank line.
