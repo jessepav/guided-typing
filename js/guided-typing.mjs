@@ -248,7 +248,19 @@ function saveConfig() {
     localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config));
 }
 
+function checkBrowserFeatures() {
+    if (!CSS.supports("(selector(&))")) {
+        const warningDiv = document.querySelector(".browser-feature-warning");
+        warningDiv.style.removeProperty("display");
+        warningDiv.querySelector("span:first-child").addEventListener('click', () => {
+            warningDiv.style.display = "none";
+        });
+    }
+}
+
 async function main() {
+    checkBrowserFeatures();
+
     docIcon.addEventListener('click', showSettingsScreen);
     settingsButtonHolder.addEventListener('click', settingsButtonClicked);
     settingsHolder.addEventListener('keydown', ev => {

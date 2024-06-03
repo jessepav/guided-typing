@@ -21,6 +21,27 @@ html {
   --success-color: #0067c2;
 }
 
+.browser-feature-warning {
+  position: relative;
+  max-width: 800px;
+  margin: auto;
+  color: #cf3636;
+  background: lightgrey;
+  padding: 1px 20px 20px;
+  margin-top: 5px;
+}
+
+.browser-feature-warning span:first-child {
+  position: absolute;
+  top: 0px;
+  right: 5px;
+  cursor: pointer;
+  line-height: 1;
+  font-family: var(--monospace-family);
+  font-weight: bold;
+  font-size: 110%;
+}
+
 #document-holder {
   display: block;
   position: relative;
