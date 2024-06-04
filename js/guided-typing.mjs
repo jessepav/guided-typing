@@ -139,11 +139,11 @@ function layoutButtonClicked(ev) {
 
 const wpmTimeStartMap = new WeakMap();
 
-function processTextInput(textarea, expandedText, successCheck, keyboard, evHasData = true) {
+function processTextInput(textarea, expandedText, successCheck, keyboard, isInsert = true) {
     const t = textarea.value;
 
-    // evHasData == false would indicate we arrived here via a backspace or delete or such
-    if (showWPM && t.length == 1 && evHasData)
+    // isInsert == false would indicate we arrived here via a backspace or delete or such
+    if (showWPM && t.length == 1 && isInsert)
         wpmTimeStartMap.set(textarea, Date.now());
 
     if (!expandedText.startsWith(t)) {
@@ -170,7 +170,7 @@ function processTextInput(textarea, expandedText, successCheck, keyboard, evHasD
                 keyboard.highlightKeys(keys);
             else {
                 keyboard.highlightKeys();
-                if (evHasData) {  // type it for the user
+                if (isInsert) {  // type it for the user
                     setTimeout(() => {
                         textarea.value = t + nextChar;
                         processTextInput(textarea, expandedText, successCheck, keyboard);
@@ -347,7 +347,8 @@ async function main() {
                     processTextInput(textarea, expandedText, successCheck, keyboard);
                 });
                 textarea.addEventListener('input', ev => {
-                    processTextInput(textarea, expandedText, successCheck, keyboard, Boolean(ev.data));
+                    processTextInput(textarea, expandedText, successCheck, keyboard,
+                                     ["insertText", "insertLineBreak"].includes(ev.inputType));
                 });
 
                 textarea.focus();
