@@ -138,19 +138,38 @@ function layoutButtonClicked(ev) {
 }
 
 const wpmTimeStartMap = new WeakMap();
+const matchLenMap = new WeakMap();  // stores the length of the most recent successful match for each textarea
 
 function processTextInput(textarea, expandedText, successCheck, keyboard, isInsert = true) {
-    const t = textarea.value;
+    let t = textarea.value;
 
     // isInsert == false would indicate we arrived here via a backspace or delete or such
     if (showWPM && t.length == 1 && isInsert)
         wpmTimeStartMap.set(textarea, Date.now());
 
+    // Perform some ergonic autocorrections on characters typed after a successful match
+    const lastSuccessfulMatchLen = matchLenMap.get(textarea) ?? 0;
+    if (isInsert && t.length == lastSuccessfulMatchLen + 1) {
+        // If the character the user was supposed to type is a newline, and the user typed a
+        // space, replace the space with anewline.
+        if (t.at(-1) == ' ' && expandedText[t.length - 1] == '\n') {
+            t = t.slice(0, t.length - 1) + '\n';
+            textarea.value = t;
+        } else if (t.at(-1) == '\n' && expandedText.slice(t.length - 1, t.length + 1) == '\n\n') {
+            // If the user typed a newline at a break between paragraphs, add an extra newline
+            // to move directly to the next paragraph.
+            t += '\n';
+            textarea.value = t;
+        }
+    }
+
     if (!expandedText.startsWith(t)) {
         textarea.style.setProperty("color", "var(--error-color)");
         successCheck.style.removeProperty("display");
         keyboard.highlightKeys(['\b']);
+        matchLenMap.delete(textarea);  // you'll need to match again to get autocorrect
     } else {
+        matchLenMap.set(textarea, t.length);
         if (t.length == expandedText.length) {
             textarea.style.setProperty("color", "var(--success-color)");
             successCheck.style.display = "block";
