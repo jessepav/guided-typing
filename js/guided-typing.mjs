@@ -277,6 +277,15 @@ function checkBrowserFeatures() {
     }
 }
 
+function sizeTextarea(sectionEl, textarea, keyboard) {
+    const ELEMENT_SPACING_HEIGHT = 25,  // height of padding and borders around elements
+          TEXTAREA_MIN_HEIGHT = 50;     // empirically, one comfortable line of text
+    const viewportHeight = document.documentElement.clientHeight;
+    const remainingHeight = viewportHeight - sectionEl.offsetHeight - keyboard.offsetHeight - ELEMENT_SPACING_HEIGHT;
+    const textareaHeight = Math.max(TEXTAREA_MIN_HEIGHT, Math.min(sectionEl.offsetHeight, remainingHeight));
+    textarea.style.height = `${textareaHeight}px`;
+}
+
 async function main() {
     checkBrowserFeatures();
 
@@ -337,7 +346,6 @@ async function main() {
         if (selected) {
             if (!nextEl || !nextEl.classList.contains("input-holder")) {
                 const textarea = document.createElement("textarea");
-                textarea.style.height = `${sectionEl.offsetHeight}px`;
                 // Use the first two words of the section text as a placeholder
                 const sectionText = sectionEl.innerText;
                 let breakIdx = sectionText.indexOf(' ');
@@ -363,6 +371,7 @@ async function main() {
                     if (textarea.nextElementSibling != keyboard)
                         textarea.after(keyboard);
                     sectionEl.scrollIntoView(true);
+                    sizeTextarea(sectionEl, textarea, keyboard);
                     processTextInput(textarea, expandedText, successCheck, keyboard);
                 });
                 textarea.addEventListener('input', ev => {
@@ -390,6 +399,13 @@ async function main() {
                 focusedEl.value = '';
                 focusedEl.dispatchEvent(new InputEvent('input', { bubbles: true, data: null }));
             }
+        }
+    });
+    window.addEventListener('resize', () => {
+        if (keyboard.parentElement) {
+            const textarea = keyboard.previousElementSibling;
+            const sectionEl = textarea.parentElement.previousElementSibling;
+            sizeTextarea(sectionEl, textarea, keyboard);
         }
     });
 }

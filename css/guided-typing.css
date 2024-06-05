@@ -245,6 +245,11 @@ display-keyboard {
   margin-bottom: 1em;
 }
 
+.input-holder {
+  margin: 0;
+  padding: 0;
+}
+
 .settings-icons-holder {
   position: fixed;
   right: 2px;
