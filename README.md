@@ -14,6 +14,9 @@ frustration was hunting around the keyboard for each character. Additionally,
 most typing apps don't allow you to easily set up your own texts that are
 interesting for the student.
 
+Also, this app is free, runs no ads, and doesn't store cookies on your device.
+It's just something I made for my own kid that I thought might be useful.
+
 In the below screenshot, you see how the app shows which keys need to be pressed
 next, taking into account the left and right shift keys, to continue typing the
 active text section.
