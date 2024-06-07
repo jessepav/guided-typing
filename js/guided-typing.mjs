@@ -61,6 +61,10 @@ function showDocumentText(mdText) {
     displayedText = mdText;
 }
 
+function inSettingsScreen() {
+    return document.body.classList.contains("settings");
+}
+
 async function showSettingsScreen() {
     if (!settingsTextHelp.hasChildNodes()) {
         const response = await fetch(HELP_URL);
@@ -291,13 +295,6 @@ async function main() {
 
     docIcon.addEventListener('click', showSettingsScreen);
     settingsButtonHolder.addEventListener('click', settingsButtonClicked);
-    settingsHolder.addEventListener('keydown', ev => {
-        if (ev.key == 's' && ev.ctrlKey) {
-            ev.stopPropagation();
-            ev.preventDefault();
-            settingsSaveButton.click();
-        }
-    });
 
     keyboardIcon.addEventListener('click', showLayoutDialog);
     layoutButtonHolder.addEventListener('click', layoutButtonClicked);
@@ -399,6 +396,21 @@ async function main() {
                 focusedEl.value = '';
                 focusedEl.dispatchEvent(new InputEvent('input', { bubbles: true, data: null }));
             }
+        }
+    });
+    document.body.addEventListener('keydown', ev => {
+        const inSettings = inSettingsScreen();
+        let eatEvent = true;
+        if (inSettings && ev.key == 's' && ev.ctrlKey) {
+            settingsSaveButton.click();
+        } else if (!inSettings && ev.key == 'd' && ev.ctrlKey) {
+            showSettingsScreen();
+        } else {
+            eatEvent = false;
+        }
+        if (eatEvent) {
+            ev.stopPropagation();
+            ev.preventDefault();
         }
     });
     window.addEventListener('resize', () => {
