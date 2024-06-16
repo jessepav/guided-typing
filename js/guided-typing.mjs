@@ -146,6 +146,11 @@ const matchLenMap = new WeakMap();  // stores the length of the most recent succ
 
 function processTextInput(textarea, expandedText, successCheck, keyboard, isInsert = true) {
     let t = textarea.value;
+    // Trim off whitespace following the cursor position. This prevents invisible
+    // whitespace from causing a match failure.
+    const trimmedText = t.slice(0, textarea.selectionEnd) + t.slice(textarea.selectionEnd).trimEnd();
+    if (t != trimmedText)
+        t = textarea.value = trimmedText;
 
     // isInsert == false would indicate we arrived here via a backspace or delete or such
     if (showWPM && t.length == 1 && isInsert)
