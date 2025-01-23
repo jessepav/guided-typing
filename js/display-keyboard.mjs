@@ -1,7 +1,6 @@
-// COMPONENT_CSS {{{1
+// COMPONENT_CSS and componentStylesheet {{{1
 
 const COMPONENT_CSS = `
-    <style>
     * {
         box-sizing: border-box;
     }
@@ -91,8 +90,10 @@ const COMPONENT_CSS = `
             & > span.key-label.small-label { font-size: 6cqb; }
         }
     }
-    </style>
 `;
+
+const componentStylesheet = new CSSStyleSheet();
+componentStylesheet.replaceSync(COMPONENT_CSS);
 
 // US_QWERTY_DEF {{{1
 
@@ -309,7 +310,7 @@ function getKeyboardData(layoutName) {
     if (!keyboardData) {
         const { nameIdMap, keyboardHTML } = generateKeyboardHTML(keyboardDefMap.get(layoutName));
         const templateEl = document.createElement('template');
-        templateEl.innerHTML = COMPONENT_CSS + keyboardHTML;
+        templateEl.innerHTML = keyboardHTML;
         keyboardData = { nameIdMap, templateEl };
         keyboardDataMap.set(layoutName, keyboardData);
     }
@@ -349,6 +350,7 @@ class DisplayKeyboard extends HTMLElement
 
         this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(kdata.templateEl.content.cloneNode(true));
+        this.shadowRoot.adoptedStyleSheets = [componentStylesheet];
 
         this.initialized = true;
     }
