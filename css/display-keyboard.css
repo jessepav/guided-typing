@@ -1,0 +1,89 @@
+* {
+    box-sizing: border-box;
+}
+
+:host {
+    display: block;
+    contain: content;
+}
+
+:host([hidden]) {
+    display: none;
+}
+
+div.keyboard {
+    width: 97%;
+    margin: auto;
+    height: auto;
+    aspect-ratio: 11 / 3.5;
+    border: 1px solid black;
+    font-weight: bold;
+    font-family: var(--sans-serif-family, sans-serif);
+
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
+
+    container: keyboard / size;
+}
+
+div.keyboard-row {
+    height: 20%;
+
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+}
+
+div.key {
+    border: 1px solid black;
+    background-color: #eaeaea;
+    transition: background-color 0.2s ease-in-out;
+
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    align-content: space-evenly;
+    justify-content: space-evenly;
+
+    &[data-num-glyphs="1"] {
+        grid-template:
+            "a" 1fr / 1fr;
+    }
+
+    &[data-num-glyphs="2"] {
+        grid-template:
+            "b" 1fr
+            "a" 1fr / 1fr;
+    }
+
+    &[data-num-glyphs="3"], &[data-num-glyphs="4"] {
+        grid-template:
+            "b d" 1fr
+            "a c" 1fr / 1fr 1fr;
+    }
+
+    &.highlighted {
+        background-color: #9393ff;
+    }
+
+    & > span.key-label:nth-child(1) { grid-area: a; }
+    & > span.key-label:nth-child(2) { grid-area: b; }
+    & > span.key-label:nth-child(3) { grid-area: c; }
+    & > span.key-label:nth-child(4) { grid-area: d; }
+}
+
+span.key-label {
+    margin: 0;
+    padding: 0;
+    line-height: 100%;
+}
+
+@container keyboard (min-width: 1px) {
+    span.key-label { font-size: 6cqb; }
+
+    div.key[data-num-glyphs="1"] {
+        & > span.key-label { font-size: 8cqb; }
+        & > span.key-label.small-label { font-size: 6cqb; }
+    }
+}
