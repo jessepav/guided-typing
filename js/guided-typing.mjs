@@ -355,6 +355,8 @@ async function main() {
                     breakIdx = sectionText.indexOf(' ', breakIdx + 1);
                 textarea.placeholder = breakIdx != -1 ? sectionText.slice(0, breakIdx) + ' ...'
                                                       : sectionText;  // otherwise all of it
+                // and (try to?) disable autocomplete
+                textarea.autocomplete = "off";
 
                 const inputHolder = document.createElement("div");
                 inputHolder.className = "input-holder";
